@@ -1,5 +1,3 @@
-package com.googlecode.htmlcompressor.compressor;
-
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,11 +11,10 @@ package com.googlecode.htmlcompressor.compressor;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.googlecode.htmlcompressor.compressor;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -153,7 +150,9 @@ public class HtmlCompressor implements Compressor {
 	protected static final Pattern scriptPattern = Pattern.compile("(<script[^>]*?>)(.*?)(</script>)", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
 	protected static final Pattern stylePattern = Pattern.compile("(<style[^>]*?>)(.*?)(</style>)", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
 	protected static final Pattern tagPropertyPattern = Pattern.compile("(\\s\\w+)\\s*=\\s*(?=[^<]*?>)", Pattern.CASE_INSENSITIVE);
-	protected static final Pattern cdataPattern = Pattern.compile("\\s*<!\\[CDATA\\[(.*?)\\]\\]>\\s*", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
+	protected static final Pattern cdataPattern1 = Pattern.compile("^\\s*<!\\[CDATA\\[(.*?)\\]\\]>\\s*$", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
+	protected static final Pattern cdataPattern2 = Pattern.compile("^\\s*//[ \\t]*<!\\[CDATA\\[(.*?)//[ \\t]*\\]\\]>\\s*$", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
+	protected static final Pattern cdataPattern3 = Pattern.compile("^\\s*/\\*\\s*<!\\[CDATA\\[\\s*\\*/(.*?)/\\*\\s*\\]\\]>\\s*\\*/\\s*$", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
 	protected static final Pattern doctypePattern = Pattern.compile("<!DOCTYPE[^>]*>", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
 	protected static final Pattern typeAttrPattern = Pattern.compile("type\\s*=\\s*([\\\"']*)(.+?)\\1", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
 	protected static final Pattern jsTypeAttrPattern = Pattern.compile("(<script[^>]*)type\\s*=\\s*([\"']*)(?:text|application)/javascript\\2([^>]*>)", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
@@ -962,24 +961,21 @@ public class HtmlCompressor implements Compressor {
 			}
 			
 			javaScriptCompressor = yuiJsCompressor;
-		}
-		
-		//detect CDATA wrapper
-		boolean cdataWrapper = false;
-		Matcher matcher = cdataPattern.matcher(source);
-		if(matcher.matches()) {
-			cdataWrapper = true;
-			source = matcher.group(1);
-		}
+        }
+
+        //Try to parse the content from a cdata block
+        Map<String,String> cdataResult = splitCdata(source);
+        if (null != cdataResult) {
+            source = cdataResult.get("content");
+        }
 		
 		String result = javaScriptCompressor.compress(source);
-		
-		if(cdataWrapper) {
-			result = "<![CDATA[" + result + "]]>";
+
+        if (null != cdataResult) {
+			result = cdataResult.get("startTag") + result + cdataResult.get("endTag");
 		}
 
 		return result;
-		
 	}
 	
 	protected String compressCssStyles(String source) {
@@ -991,25 +987,70 @@ public class HtmlCompressor implements Compressor {
 			
 			cssCompressor = yuiCssCompressor;
 		}
-		
-		//detect CDATA wrapper
-		boolean cdataWrapper = false;
-		Matcher matcher = cdataPattern.matcher(source);
-		if(matcher.matches()) {
-			cdataWrapper = true;
-			source = matcher.group(1);
-		}
-		
-		String result = cssCompressor.compress(source);
-		
-		if(cdataWrapper) {
-			result = "<![CDATA[" + result + "]]>";
-		} 
+
+        //Try to parse the content from a cdata block
+        Map<String,String> cdataResult = splitCdata(source);
+        if (null != cdataResult) {
+            source = cdataResult.get("content");
+        }
+
+        String result = cssCompressor.compress(source);
+
+        if (null != cdataResult) {
+            result = cdataResult.get("startTag") + result + cdataResult.get("endTag");
+        }
 
 		return result;
-		
 	}
-	
+
+    /**
+     * Try to parse cdata block from the given source.
+     *
+     * @param   source
+     * @return
+     */
+    protected Map<String,String> splitCdata(String source)
+    {
+        Map<String,String> result   = null;
+        Matcher matcher             = cdataPattern1.matcher(source);
+        String cdataContent         = null;
+        String cdataStartTag        = null;
+        String cdataEndTag          = null;
+
+        if(matcher.matches()) {
+            cdataStartTag      = "<![CDATA[";
+            cdataContent       = matcher.group(1);
+            cdataEndTag        = "]]>";
+        }
+
+        if (null == cdataContent) {
+            matcher = cdataPattern2.matcher(source);
+            if(matcher.matches()) {
+                cdataStartTag   = "//<![CDATA[\n";
+                cdataContent    = matcher.group(1);
+                cdataEndTag     = "//]]>";
+            }
+        }
+
+        if (null == cdataContent) {
+            matcher = cdataPattern3.matcher(source);
+            if(matcher.matches()) {
+                cdataStartTag   = "/*<![CDATA[*/";
+                cdataContent    = matcher.group(1);
+                cdataEndTag     = "/*]]>*/";
+            }
+        }
+
+        if (null != cdataContent) {
+            result = new HashMap<String, String>(3);
+            result.put("startTag", cdataStartTag);
+            result.put("content", cdataContent);
+            result.put("endTag", cdataEndTag);
+        }
+
+        return result;
+    }
+
 	protected HtmlCompressor createCompressorClone() {
 		HtmlCompressor clone = new HtmlCompressor();
 		clone.setJavaScriptCompressor(javaScriptCompressor);
