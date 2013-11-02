@@ -300,4 +300,19 @@ public class HtmlCompressorTest
 
         assertEquals(result, compressor.compress(source));
     }
+
+    @Test
+    public void testPhpEof() throws Exception {
+        String source = readResource("testPhpEof.html");
+        String result = readResource("testPhpEofResult.html");
+
+        List<Pattern> preservePatterns = new ArrayList<Pattern>();
+        preservePatterns.add(HtmlCompressor.PHP_TAG_PATTERN); //<?php ... ?> blocks
+
+        HtmlCompressor compressor = new HtmlCompressor();
+        compressor.setRemoveIntertagSpaces(true);
+        compressor.setPreservePatterns(preservePatterns);
+
+        assertEquals(result, compressor.compress(source));
+    }
 }
