@@ -79,6 +79,8 @@ public class CmdLineCompressor {
 	private boolean preserveServerScriptTagsOpt;
 	private boolean preserveSsiTagsOpt;
 	private boolean compressJsOpt;
+    private boolean skipCompressJsIfPreserved;
+    private boolean skipCompressCssIfPreserved;
 	private boolean compressCssOpt;
 	private String jsCompressorOpt;
 
@@ -132,6 +134,8 @@ public class CmdLineCompressor {
 		Option preserveServerScriptTagsOpt = parser.addBooleanOption("preserve-server-script");
 		Option preserveSsiTagsOpt = parser.addBooleanOption("preserve-ssi");
 		Option compressJsOpt = parser.addBooleanOption("compress-js");
+		Option skipCompressJsIfPreservedOpt = parser.addBooleanOption("compress-js-skip-preserve");
+		Option skipCompressCssIfPreservedOpt = parser.addBooleanOption("compress-css-skip-preserve");
 		Option compressCssOpt = parser.addBooleanOption("compress-css");
 		Option jsCompressorOpt = parser.addStringOption("js-compressor");
 		
@@ -177,6 +181,8 @@ public class CmdLineCompressor {
 			this.preserveSsiTagsOpt = (Boolean)parser.getOptionValue(preserveSsiTagsOpt, false);
 			this.compressJsOpt = (Boolean)parser.getOptionValue(compressJsOpt, false);
 			this.compressCssOpt = (Boolean)parser.getOptionValue(compressCssOpt, false);
+			this.skipCompressJsIfPreserved = (Boolean)parser.getOptionValue(skipCompressJsIfPreservedOpt, false);
+			this.skipCompressCssIfPreserved = (Boolean)parser.getOptionValue(skipCompressCssIfPreservedOpt, false);
 			this.jsCompressorOpt = (String)parser.getOptionValue(jsCompressorOpt, HtmlCompressor.JS_COMPRESSOR_YUI);
 			
 			this.simpleDoctypeOpt = (Boolean)parser.getOptionValue(simpleDoctypeOpt, false);
@@ -351,6 +357,8 @@ public class CmdLineCompressor {
 		htmlCompressor.setRemoveQuotes(removeQuotesOpt);
 		htmlCompressor.setPreserveLineBreaks(preserveLineBreaksOpt);
 		htmlCompressor.setCompressJavaScript(compressJsOpt);
+		htmlCompressor.setCompressJavaScriptWithPreservedBlocks(!skipCompressJsIfPreserved);
+		htmlCompressor.setCompressCssWithPreservedBlocks(!skipCompressCssIfPreserved);
 		htmlCompressor.setCompressCss(compressCssOpt);
 
 		htmlCompressor.setSimpleDoctype(simpleDoctypeOpt);
@@ -442,7 +450,7 @@ public class CmdLineCompressor {
 								for(File file : inputFile.listFiles(new CompressorFileFilter(typeOpt, filemaskOpt, false))) {
 									if(!file.isDirectory()) {
 										String from = file.getCanonicalPath();
-										String to = from.replaceFirst(escRegEx(inputFile.getCanonicalPath()), Matcher.quoteReplacement(outpuFile.getCanonicalPath())); 
+										String to = from.replaceFirst(escRegEx(inputFile.getCanonicalPath()), Matcher.quoteReplacement(outpuFile.getCanonicalPath()));
 										map.put(from, to);
 									}
 								}
@@ -458,12 +466,12 @@ public class CmdLineCompressor {
 										}
 									} else if (child.isFile()) {
 										String from = child.getCanonicalPath();
-										String to = from.replaceFirst(escRegEx(inputFile.getCanonicalPath()), Matcher.quoteReplacement(outpuFile.getCanonicalPath())); 
+										String to = from.replaceFirst(escRegEx(inputFile.getCanonicalPath()), Matcher.quoteReplacement(outpuFile.getCanonicalPath()));
 										map.put(from, to);
 										//make dirs
 										(new File((new File(to)).getCanonicalFile().getParent())).mkdirs();
 									}
-								}								
+								}
 							}
 						} else {
 							throw new IllegalArgumentException("Output must be a directory and end with a slash (/)");
@@ -472,12 +480,11 @@ public class CmdLineCompressor {
 						//is file
 						if(outpuFile != null && outpuFile.isDirectory()) {
 							String from = inputFile.getCanonicalPath();
-							String to = from.replaceFirst(escRegEx(inputFile.getCanonicalFile().getParentFile().getCanonicalPath()), Matcher.quoteReplacement(outpuFile.getCanonicalPath())); 
+							String to = from.replaceFirst(escRegEx(inputFile.getCanonicalFile().getParentFile().getCanonicalPath()), Matcher.quoteReplacement(outpuFile.getCanonicalPath()));
 							map.put(fileArgsOpt[i], to);
 						} else {
 							map.put(fileArgsOpt[i], outputFilenameOpt);
 						}
-						
 					}
 				} else {
 					//is url
@@ -590,8 +597,10 @@ public class CmdLineCompressor {
 				+ " --remove-surrounding-spaces <min|max|all|custom_list>\n" 
 				+ "                               Predefined or custom comma separated list of tags\n"
 				+ " --compress-js                 Enable inline JavaScript compression\n"
+				+ " --compress-js-skip-preserve   Disable the JavaScript compression for preserve blocks\n"
 				+ " --compress-css                Enable inline CSS compression using YUICompressor\n"
-				+ " --js-compressor <yui|closure> Switch inline JavaScript compressor between\n"
+                + " --compress-css-skip-preserve  Disable the CSS compression for preserve blocks\n"
+                + " --js-compressor <yui|closure> Switch inline JavaScript compressor between\n"
 				+ "                               YUICompressor (default) and Closure Compiler\n\n"
 				
 				+ "JavaScript Compression Options for YUI Compressor:\n"
@@ -610,7 +619,7 @@ public class CmdLineCompressor {
 				+ " --line-break <column num>     Insert a line break after the specified column\n\n"
 	
 				+ "Custom Block Preservation Options:\n"
-				+ " --preserve-php                Preserve <?php ... ?> tags\n"
+				+ " --preserve-php                Preserve <?php ... ?> or <?php ... EOF\n"
 				+ " --preserve-server-script      Preserve <% ... %> tags\n"
 				+ " --preserve-ssi                Preserve <!--# ... --> tags\n"
 				+ " -p, --preserve <path>         Read regular expressions that define\n"
@@ -663,7 +672,5 @@ public class CmdLineCompressor {
 			}
 			return false;
 		}
-		
 	}
-
 }

@@ -91,6 +91,8 @@ public class HtmlCompressor implements Compressor {
 	private boolean removeIntertagSpaces = false;
 	private boolean removeQuotes = false;
 	private boolean compressJavaScript = false;
+    private boolean compressJavaScriptWithPreservedBlocks = false;
+    private boolean compressCssWithPreservedBlocks = false;
 	private boolean compressCss = false;
 	private boolean simpleDoctype = false;
 	private boolean removeScriptAttributes = false;
@@ -127,6 +129,7 @@ public class HtmlCompressor implements Compressor {
 	protected static final String tempTextAreaBlock = "%%%~COMPRESS~TEXTAREA~{0,number,#}~%%%";
 	protected static final String tempScriptBlock = "%%%~COMPRESS~SCRIPT~{0,number,#}~%%%";
 	protected static final String tempStyleBlock = "%%%~COMPRESS~STYLE~{0,number,#}~%%%";
+	protected static final String tempStyleAttributeBlock = "%%%~COMPRESS~STYLE-ATTRIBUTE~{0,number,#}~%%%";
 	protected static final String tempEventBlock = "%%%~COMPRESS~EVENT~{0,number,#}~%%%";
 	protected static final String tempLineBreakBlock = "%%%~COMPRESS~LT~{0,number,#}~%%%";
 	protected static final String tempSkipBlock = "%%%~COMPRESS~SKIP~{0,number,#}~%%%";
@@ -149,6 +152,7 @@ public class HtmlCompressor implements Compressor {
 	protected static final Pattern taPattern = Pattern.compile("(<textarea[^>]*?>)(.*?)(</textarea>)", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
 	protected static final Pattern scriptPattern = Pattern.compile("(<script[^>]*?>)(.*?)(</script>)", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
 	protected static final Pattern stylePattern = Pattern.compile("(<style[^>]*?>)(.*?)(</style>)", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
+    protected static final Pattern styleAttrPattern = Pattern.compile("(<\\w+[^>]*)(style\\s*=\\s*)(((\")([^\"]*)\")|((')([^']*)'))([^>]*>)", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
 	protected static final Pattern tagPropertyPattern = Pattern.compile("(\\s\\w+)\\s*=\\s*(?=[^<]*?>)", Pattern.CASE_INSENSITIVE);
 	protected static final Pattern cdataPattern1 = Pattern.compile("^\\s*<!\\[CDATA\\[(.*?)\\]\\]>\\s*$", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
 	protected static final Pattern cdataPattern2 = Pattern.compile("^\\s*//[ \\t]*<!\\[CDATA\\[(.*?)//[ \\t]*\\]\\]>\\s*$", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
@@ -179,12 +183,13 @@ public class HtmlCompressor implements Compressor {
 	protected static final Pattern tempPrePattern = Pattern.compile("%%%~COMPRESS~PRE~(\\d+?)~%%%");
 	protected static final Pattern tempTextAreaPattern = Pattern.compile("%%%~COMPRESS~TEXTAREA~(\\d+?)~%%%");
 	protected static final Pattern tempScriptPattern = Pattern.compile("%%%~COMPRESS~SCRIPT~(\\d+?)~%%%");
+	protected static final Pattern tempStyleAttributePattern = Pattern.compile("%%%~COMPRESS~STYLE-ATTRIBUTE~(\\d+?)~%%%");
 	protected static final Pattern tempStylePattern = Pattern.compile("%%%~COMPRESS~STYLE~(\\d+?)~%%%");
 	protected static final Pattern tempEventPattern = Pattern.compile("%%%~COMPRESS~EVENT~(\\d+?)~%%%");
 	protected static final Pattern tempSkipPattern = Pattern.compile("%%%~COMPRESS~SKIP~(\\d+?)~%%%");
 	protected static final Pattern tempLineBreakPattern = Pattern.compile("%%%~COMPRESS~LT~(\\d+?)~%%%");
-	
-	/**
+
+    /**
 	 * The main method that compresses given HTML source and returns compressed
 	 * result.
 	 * 
@@ -205,22 +210,23 @@ public class HtmlCompressor implements Compressor {
 		List<String> taBlocks = new ArrayList<String>();
 		List<String> scriptBlocks = new ArrayList<String>();
 		List<String> styleBlocks = new ArrayList<String>();
+		List<String> styleAttributeBlocks = new ArrayList<String>();
 		List<String> eventBlocks = new ArrayList<String>();
 		List<String> skipBlocks = new ArrayList<String>();
 		List<String> lineBreakBlocks = new ArrayList<String>();
 		List<List<String>> userBlocks = new ArrayList<List<String>>();
 		
 		//preserve blocks
-		html = preserveBlocks(html, preBlocks, taBlocks, scriptBlocks, styleBlocks, eventBlocks, condCommentBlocks, skipBlocks, lineBreakBlocks, userBlocks);
+		html = preserveBlocks(html, preBlocks, taBlocks, scriptBlocks, styleBlocks, styleAttributeBlocks, eventBlocks, condCommentBlocks, skipBlocks, lineBreakBlocks, userBlocks);
 		
 		//process pure html
 		html = processHtml(html);
 		
 		//process preserved blocks
-		processPreservedBlocks(preBlocks, taBlocks, scriptBlocks, styleBlocks, eventBlocks, condCommentBlocks, skipBlocks, lineBreakBlocks, userBlocks);
+		processPreservedBlocks(preBlocks, taBlocks, scriptBlocks, styleBlocks, styleAttributeBlocks, eventBlocks, condCommentBlocks, skipBlocks, lineBreakBlocks, userBlocks);
 		
 		//put preserved blocks back
-		html = returnBlocks(html, preBlocks, taBlocks, scriptBlocks, styleBlocks, eventBlocks, condCommentBlocks, skipBlocks, lineBreakBlocks, userBlocks);
+		html = returnBlocks(html, preBlocks, taBlocks, scriptBlocks, styleBlocks, styleAttributeBlocks, eventBlocks, condCommentBlocks, skipBlocks, lineBreakBlocks, userBlocks);
 		
 		//calculate compressed statistics
 		endStatistics(html);
@@ -259,7 +265,7 @@ public class HtmlCompressor implements Compressor {
 		}
 	}
 	
-	protected String preserveBlocks(String html, List<String> preBlocks, List<String> taBlocks, List<String> scriptBlocks, List<String> styleBlocks, List<String> eventBlocks, List<String> condCommentBlocks, List<String> skipBlocks, List<String> lineBreakBlocks, List<List<String>> userBlocks) {
+	protected String preserveBlocks(String html, List<String> preBlocks, List<String> taBlocks, List<String> scriptBlocks, List<String> styleBlocks, List<String> styleAttributeBlocks, List<String> eventBlocks, List<String> condCommentBlocks, List<String> skipBlocks, List<String> lineBreakBlocks, List<List<String>> userBlocks) {
 		
 		//preserve user blocks
 		if(preservePatterns != null) {
@@ -389,6 +395,22 @@ public class HtmlCompressor implements Compressor {
 		}
 		matcher.appendTail(sb);
 		html = sb.toString();
+
+        //preserve style attribute
+        matcher = styleAttrPattern.matcher(html);
+        index   = 0;
+        sb      = new StringBuffer();
+        while(matcher.find()) {
+            if(null != matcher.group(6) && matcher.group(6).trim().length() > 0) {
+                styleAttributeBlocks.add(matcher.group(6));
+                matcher.appendReplacement(sb, "$1$2$5"+MessageFormat.format(tempStyleAttributeBlock, index++)+"$5$10");
+            } else if (null != matcher.group(9) && matcher.group(9).trim().length() > 0) {
+                styleAttributeBlocks.add(matcher.group(9));
+                matcher.appendReplacement(sb, "$1$2$8"+MessageFormat.format(tempStyleAttributeBlock, index++)+"$8$10");
+            }
+        }
+        matcher.appendTail(sb);
+        html = sb.toString();
 		
 		//preserve TEXTAREA tags
 		matcher = taPattern.matcher(html);
@@ -418,8 +440,30 @@ public class HtmlCompressor implements Compressor {
 
 		return html;
 	}
+
+    /**
+     * Return <code>true</code> if the given source has preserved blocks.
+     *
+     * @param source
+     * @return
+     */
+    protected Boolean hasPreserveBlocks(String source)
+    {
+        //put user blocks back
+        if(preservePatterns != null) {
+            for(int p = preservePatterns.size() - 1; p >= 0; p--) {
+                Pattern tempUserPattern = Pattern.compile("%%%~COMPRESS~USER" + p + "~(\\d+?)~%%%");
+                Matcher matcher = tempUserPattern.matcher(source);
+                while(matcher.find()) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 	
-	protected String returnBlocks(String html, List<String> preBlocks, List<String> taBlocks, List<String> scriptBlocks, List<String> styleBlocks, List<String> eventBlocks, List<String> condCommentBlocks, List<String> skipBlocks, List<String> lineBreakBlocks, List<List<String>> userBlocks) {
+	protected String returnBlocks(String html, List<String> preBlocks, List<String> taBlocks, List<String> scriptBlocks, List<String> styleBlocks, List<String> styleAttributeBlocks, List<String> eventBlocks, List<String> condCommentBlocks, List<String> skipBlocks, List<String> lineBreakBlocks, List<List<String>> userBlocks) {
 
 		//put line breaks back
 		if(preserveLineBreaks) {
@@ -446,6 +490,18 @@ public class HtmlCompressor implements Compressor {
 		}
 		matcher.appendTail(sb);
 		html = sb.toString();
+
+        //put style attributes blocks back
+        matcher = tempStyleAttributePattern.matcher(html);
+        sb = new StringBuffer();
+        while(matcher.find()) {
+            int i = Integer.parseInt(matcher.group(1));
+            if(styleAttributeBlocks.size() > i) {
+                matcher.appendReplacement(sb, Matcher.quoteReplacement(styleAttributeBlocks.get(i)));
+            }
+        }
+        matcher.appendTail(sb);
+        html = sb.toString();
 		
 		//put STYLE blocks back
 		matcher = tempStylePattern.matcher(html);
@@ -793,11 +849,12 @@ public class HtmlCompressor implements Compressor {
 		return html;
 	}
 	
-	protected void processPreservedBlocks(List<String> preBlocks, List<String> taBlocks, List<String> scriptBlocks, List<String> styleBlocks, List<String> eventBlocks, List<String> condCommentBlocks, List<String> skipBlocks, List<String> lineBreakBlocks, List<List<String>> userBlocks) {
+	protected void processPreservedBlocks(List<String> preBlocks, List<String> taBlocks, List<String> scriptBlocks, List<String> styleBlocks, List<String> styleAttributeBlocks, List<String> eventBlocks, List<String> condCommentBlocks, List<String> skipBlocks, List<String> lineBreakBlocks, List<List<String>> userBlocks) {
 		processPreBlocks(preBlocks);
 		processTextAreaBlocks(taBlocks);
 		processScriptBlocks(scriptBlocks);
 		processStyleBlocks(styleBlocks);
+		processStyleAttributeBlocks(styleAttributeBlocks);
 		processEventBlocks(eventBlocks);
 		processCondCommentBlocks(condCommentBlocks);
 		processSkipBlocks(skipBlocks);
@@ -906,6 +963,10 @@ public class HtmlCompressor implements Compressor {
 		
 		if(compressJavaScript) {
 			for(int i = 0; i < scriptBlocks.size(); i++) {
+                if (!compressJavaScriptWithPreservedBlocks && hasPreserveBlocks(scriptBlocks.get(i))) {
+                        continue;
+                }
+
 				scriptBlocks.set(i, compressJavaScript(scriptBlocks.get(i)));
 			}
 		} else if(generateStatistics) {
@@ -931,6 +992,10 @@ public class HtmlCompressor implements Compressor {
 		
 		if(compressCss) {
 			for(int i = 0; i < styleBlocks.size(); i++) {
+                if (!compressCssWithPreservedBlocks && hasPreserveBlocks(styleBlocks.get(i))) {
+                    continue;
+                }
+
 				styleBlocks.set(i, compressCssStyles(styleBlocks.get(i)));
 			}
 		} else if(generateStatistics) {
@@ -945,22 +1010,62 @@ public class HtmlCompressor implements Compressor {
 			}
 		}
 	}
-	
-	protected String compressJavaScript(String source) {
-		
-		//set default javascript compressor
-		if(javaScriptCompressor == null) {
-			YuiJavaScriptCompressor yuiJsCompressor = new YuiJavaScriptCompressor();
-			yuiJsCompressor.setNoMunge(yuiJsNoMunge);
-			yuiJsCompressor.setPreserveAllSemiColons(yuiJsPreserveAllSemiColons);
-			yuiJsCompressor.setDisableOptimizations(yuiJsDisableOptimizations);
-			yuiJsCompressor.setLineBreak(yuiJsLineBreak);
-			
-			if(yuiErrorReporter != null) {
-				yuiJsCompressor.setErrorReporter(yuiErrorReporter);
-			}
-			
-			javaScriptCompressor = yuiJsCompressor;
+
+    protected void processStyleAttributeBlocks(List<String> styleAttrBlocks) {
+
+        if(generateStatistics) {
+            for(String block : styleAttrBlocks) {
+                statistics.getOriginalMetrics().setInlineStyleSize(statistics.getOriginalMetrics().getInlineStyleSize() + block.length());
+            }
+        }
+
+        if(compressCss) {
+            for(int i = 0; i < styleAttrBlocks.size(); i++) {
+                if (!compressCssWithPreservedBlocks && hasPreserveBlocks(styleAttrBlocks.get(i))) {
+                    continue;
+                }
+
+                String source = "*{" + styleAttrBlocks.get(i) + "}";
+                String result = compressCssStyles(source);
+
+                //Cleanup the css result
+                if (0 != result.length()) {
+                    if ('*' == result.charAt(0) && '{' == result.charAt(1) && '}' == result.charAt(result.length() - 1)) {
+                        result = result.substring(2);
+                        result = result.substring(0, result.length() - 1);
+                    }
+                }
+
+                styleAttrBlocks.set(i, result);
+            }
+        } else if(generateStatistics) {
+            for(String block : styleAttrBlocks) {
+                statistics.setPreservedSize(statistics.getPreservedSize() + block.length());
+            }
+        }
+
+        if(generateStatistics) {
+            for(String block : styleAttrBlocks) {
+                statistics.getCompressedMetrics().setInlineStyleSize(statistics.getCompressedMetrics().getInlineStyleSize() + block.length());
+            }
+        }
+    }
+
+    protected String compressJavaScript(String source) {
+
+        //set default javascript compressor
+        if(javaScriptCompressor == null) {
+            YuiJavaScriptCompressor yuiJsCompressor = new YuiJavaScriptCompressor();
+            yuiJsCompressor.setNoMunge(yuiJsNoMunge);
+            yuiJsCompressor.setPreserveAllSemiColons(yuiJsPreserveAllSemiColons);
+            yuiJsCompressor.setDisableOptimizations(yuiJsDisableOptimizations);
+            yuiJsCompressor.setLineBreak(yuiJsLineBreak);
+
+            if(yuiErrorReporter != null) {
+                yuiJsCompressor.setErrorReporter(yuiErrorReporter);
+            }
+
+            javaScriptCompressor = yuiJsCompressor;
         }
 
         //Try to parse the content from a cdata block
@@ -968,25 +1073,25 @@ public class HtmlCompressor implements Compressor {
         if (null != cdataResult) {
             source = cdataResult.get("content");
         }
-		
-		String result = javaScriptCompressor.compress(source);
+
+        String result = javaScriptCompressor.compress(source);
 
         if (null != cdataResult) {
-			result = cdataResult.get("startTag") + result + cdataResult.get("endTag");
-		}
+            result = cdataResult.get("startTag") + result + cdataResult.get("endTag");
+        }
 
-		return result;
-	}
-	
-	protected String compressCssStyles(String source) {
-		
-		//set default css compressor
-		if(cssCompressor == null) {
-			YuiCssCompressor yuiCssCompressor = new YuiCssCompressor();
-			yuiCssCompressor.setLineBreak(yuiCssLineBreak);
-			
-			cssCompressor = yuiCssCompressor;
-		}
+        return result;
+    }
+
+    protected String compressCssStyles(String source) {
+
+        //set default css compressor
+        if(cssCompressor == null) {
+            YuiCssCompressor yuiCssCompressor = new YuiCssCompressor();
+            yuiCssCompressor.setLineBreak(yuiCssLineBreak);
+
+            cssCompressor = yuiCssCompressor;
+        }
 
         //Try to parse the content from a cdata block
         Map<String,String> cdataResult = splitCdata(source);
@@ -1000,8 +1105,8 @@ public class HtmlCompressor implements Compressor {
             result = cdataResult.get("startTag") + result + cdataResult.get("endTag");
         }
 
-		return result;
-	}
+        return result;
+    }
 
     /**
      * Try to parse cdata block from the given source.
@@ -1050,7 +1155,7 @@ public class HtmlCompressor implements Compressor {
 
         return result;
     }
-
+	
 	protected HtmlCompressor createCompressorClone() {
 		HtmlCompressor clone = new HtmlCompressor();
 		clone.setJavaScriptCompressor(javaScriptCompressor);
@@ -1060,6 +1165,8 @@ public class HtmlCompressor implements Compressor {
 		clone.setRemoveIntertagSpaces(removeIntertagSpaces);
 		clone.setRemoveQuotes(removeQuotes);
 		clone.setCompressJavaScript(compressJavaScript);
+		clone.setCompressJavaScriptWithPreservedBlocks(compressJavaScriptWithPreservedBlocks);
+		clone.setCompressCssWithPreservedBlocks(compressCssWithPreservedBlocks);
 		clone.setCompressCss(compressCss);
 		clone.setSimpleDoctype(simpleDoctype);
 		clone.setRemoveScriptAttributes(removeScriptAttributes);
@@ -1080,7 +1187,6 @@ public class HtmlCompressor implements Compressor {
 		clone.setYuiErrorReporter(yuiErrorReporter);
 		
 		return clone;
-
 	}
 	
 	/**
@@ -1112,6 +1218,27 @@ public class HtmlCompressor implements Compressor {
 		this.compressJavaScript = compressJavaScript;
 	}
 
+    /**
+     * Returns <code>true</code> if JavaScript blocks with preserved blocks like &lt;?php ... ?> should compress.
+     *
+     * @return current state of JavaScript compression with preserved blocks.
+     */
+    public boolean isCompressJavaScriptWithPreservedBlocks() {
+        return compressJavaScriptWithPreservedBlocks;
+    }
+
+    /**
+     * Disable JavaScript compression for preserved blocks if <code>false</code> is given. By default
+     * compression for preserved blocks are active.
+     *
+     * This corresponds to <code>--compress-js-skip-preserve</code> command line option.
+     *
+     * @param compressJavaScriptWithPreservedBlocks
+     */
+    public void setCompressJavaScriptWithPreservedBlocks(boolean compressJavaScriptWithPreservedBlocks) {
+        this.compressJavaScriptWithPreservedBlocks = compressJavaScriptWithPreservedBlocks;
+    }
+
 	/**
 	 * Returns <code>true</code> if CSS compression is enabled.
 	 * 
@@ -1140,6 +1267,27 @@ public class HtmlCompressor implements Compressor {
 	public void setCompressCss(boolean compressCss) {
 		this.compressCss = compressCss;
 	}
+
+    /**
+     * Returns <code>true</code> if CSS blocks with preserved blocks like &lt;?php ... ?> should compress.
+     *
+     * @return current state of CSS compression with preserved blocks.
+     */
+    public boolean isCompressCssWithPreservedBlocks() {
+        return compressCssWithPreservedBlocks;
+    }
+
+    /**
+     * Disable CSS compression for preserved blocks if <code>false</code> is given. By default
+     * compression for preserved blocks are active.
+     *
+     * This corresponds to <code>--compress-css-skip-preserve</code> command line option.
+     *
+     * @param compressCssWithPreservedBlocks
+     */
+    public void setCompressCssWithPreservedBlocks(boolean compressCssWithPreservedBlocks) {
+        this.compressCssWithPreservedBlocks = compressCssWithPreservedBlocks;
+    }
 
 	/**
 	 * Returns <code>true</code> if Yahoo YUI Compressor
@@ -1824,6 +1972,5 @@ public class HtmlCompressor implements Compressor {
 			tagList = null;
 		}
 		this.removeSurroundingSpaces = tagList;
-	}
-	
+    }
 }

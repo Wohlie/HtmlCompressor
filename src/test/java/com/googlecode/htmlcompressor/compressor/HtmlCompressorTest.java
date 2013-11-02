@@ -315,4 +315,72 @@ public class HtmlCompressorTest
 
         assertEquals(result, compressor.compress(source));
     }
+
+    @Test
+    public void testSkipJsCompressionWithoutPreservedBlocks() throws Exception {
+        String source = readResource("testJsCompressionWithoutPreservedBlocks.html");
+        String result = readResource("testJsCompressionWithoutPreservedBlocksResult.html");
+
+        List<Pattern> preservePatterns = new ArrayList<Pattern>();
+        preservePatterns.add(HtmlCompressor.PHP_TAG_PATTERN); //<?php ... ?> blocks
+
+        HtmlCompressor compressor = new HtmlCompressor();
+        compressor.setCompressJavaScript(true);
+        compressor.setCompressJavaScriptWithPreservedBlocks(false);
+        compressor.setRemoveIntertagSpaces(true);
+        compressor.setPreservePatterns(preservePatterns);
+
+        assertEquals(result, compressor.compress(source));
+    }
+
+    @Test
+    public void testSkipCssCompressionWithoutPreservedBlocks() throws Exception {
+        String source = readResource("testCssCompressionWithoutPreservedBlocks.html");
+        String result = readResource("testCssCompressionWithoutPreservedBlocksResult.html");
+
+        List<Pattern> preservePatterns = new ArrayList<Pattern>();
+        preservePatterns.add(HtmlCompressor.PHP_TAG_PATTERN); //<?php ... ?> blocks
+
+        HtmlCompressor compressor = new HtmlCompressor();
+        compressor.setCompressCss(true);
+        compressor.setCompressCssWithPreservedBlocks(false);
+        compressor.setRemoveIntertagSpaces(true);
+        compressor.setPreservePatterns(preservePatterns);
+
+        assertEquals(result, compressor.compress(source));
+    }
+
+    @Test
+    public void testSkipJsCompressionWithPreservedBlocks() throws Exception {
+        String source = readResource("testJsCompressionWithPreservedBlocks.html");
+        String result = readResource("testJsCompressionWithPreservedBlocksResult.html");
+
+        List<Pattern> preservePatterns = new ArrayList<Pattern>();
+        preservePatterns.add(HtmlCompressor.PHP_TAG_PATTERN); //<?php ... ?> blocks
+
+        HtmlCompressor compressor = new HtmlCompressor();
+        compressor.setCompressJavaScript(true);
+        compressor.setCompressJavaScriptWithPreservedBlocks(true);
+        compressor.setRemoveIntertagSpaces(true);
+        compressor.setPreservePatterns(preservePatterns);
+
+        assertEquals(result, compressor.compress(source));
+    }
+
+    @Test
+    public void testSkipCssCompressionWithPreservedBlocks() throws Exception {
+        String source = readResource("testCssCompressionWithPreservedBlocks.html");
+        String result = readResource("testCssCompressionWithPreservedBlocksResult.html");
+
+        List<Pattern> preservePatterns = new ArrayList<Pattern>();
+        preservePatterns.add(HtmlCompressor.PHP_TAG_PATTERN); //<?php ... ?> blocks
+
+        HtmlCompressor compressor = new HtmlCompressor();
+        compressor.setCompressCss(true);
+        compressor.setCompressCssWithPreservedBlocks(true);
+        compressor.setRemoveIntertagSpaces(true);
+        compressor.setPreservePatterns(preservePatterns);
+
+        assertEquals(result, compressor.compress(source));
+    }
 }
