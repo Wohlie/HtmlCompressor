@@ -188,6 +188,7 @@ public class HtmlCompressor implements Compressor {
 	protected static final Pattern tempEventPattern = Pattern.compile("%%%~COMPRESS~EVENT~(\\d+?)~%%%");
 	protected static final Pattern tempSkipPattern = Pattern.compile("%%%~COMPRESS~SKIP~(\\d+?)~%%%");
 	protected static final Pattern tempLineBreakPattern = Pattern.compile("%%%~COMPRESS~LT~(\\d+?)~%%%");
+	protected static final Pattern tempUserBlockPattern = Pattern.compile("%%%~COMPRESS~USER(\\d+?)~(\\d+?)~%%%");
 
     /**
 	 * The main method that compresses given HTML source and returns compressed
@@ -447,17 +448,12 @@ public class HtmlCompressor implements Compressor {
      * @param source
      * @return
      */
-    protected Boolean hasPreserveBlocks(String source)
+    protected Boolean hasPreservedUserBlocks(String source)
     {
         //put user blocks back
         if(preservePatterns != null) {
-            for(int p = preservePatterns.size() - 1; p >= 0; p--) {
-                Pattern tempUserPattern = Pattern.compile("%%%~COMPRESS~USER" + p + "~(\\d+?)~%%%");
-                Matcher matcher = tempUserPattern.matcher(source);
-                while(matcher.find()) {
-                    return true;
-                }
-            }
+            Matcher matcher = tempUserBlockPattern.matcher(source);
+            return matcher.find();
         }
 
         return false;
@@ -963,7 +959,7 @@ public class HtmlCompressor implements Compressor {
 		
 		if(compressJavaScript) {
 			for(int i = 0; i < scriptBlocks.size(); i++) {
-                if (!compressJavaScriptWithPreservedBlocks && hasPreserveBlocks(scriptBlocks.get(i))) {
+                if (!compressJavaScriptWithPreservedBlocks && hasPreservedUserBlocks(scriptBlocks.get(i))) {
                         continue;
                 }
 
@@ -992,7 +988,7 @@ public class HtmlCompressor implements Compressor {
 		
 		if(compressCss) {
 			for(int i = 0; i < styleBlocks.size(); i++) {
-                if (!compressCssWithPreservedBlocks && hasPreserveBlocks(styleBlocks.get(i))) {
+                if (!compressCssWithPreservedBlocks && hasPreservedUserBlocks(styleBlocks.get(i))) {
                     continue;
                 }
 
@@ -1021,7 +1017,7 @@ public class HtmlCompressor implements Compressor {
 
         if(compressCss) {
             for(int i = 0; i < styleAttrBlocks.size(); i++) {
-                if (!compressCssWithPreservedBlocks && hasPreserveBlocks(styleAttrBlocks.get(i))) {
+                if (!compressCssWithPreservedBlocks && hasPreservedUserBlocks(styleAttrBlocks.get(i))) {
                     continue;
                 }
 
