@@ -91,8 +91,8 @@ public class HtmlCompressor implements Compressor {
 	private boolean removeIntertagSpaces = false;
 	private boolean removeQuotes = false;
 	private boolean compressJavaScript = false;
-    private boolean compressJavaScriptWithPreservedBlocks = false;
-    private boolean compressCssWithPreservedBlocks = false;
+    private boolean compressJavaScriptWithPreservedBlocks = true;
+    private boolean compressCssWithPreservedBlocks = true;
 	private boolean compressCss = false;
 	private boolean simpleDoctype = false;
 	private boolean removeScriptAttributes = false;
