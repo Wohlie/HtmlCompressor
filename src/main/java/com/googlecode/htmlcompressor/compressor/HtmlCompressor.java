@@ -1971,18 +1971,14 @@ public class HtmlCompressor implements Compressor {
     {
         if (null != removeSurroundingSpaces) {
             if (null == removeSurroundingSpacesPattern) {
-                switch (this.removeSurroundingSpaces) {
-                    case BLOCK_TAGS_MIN:
-                        removeSurroundingSpacesPattern = surroundingSpacesMinPattern;
-                        break;
-                    case BLOCK_TAGS_MAX:
-                        removeSurroundingSpacesPattern = surroundingSpacesMaxPattern;
-                        break;
-                    case ALL_TAGS:
-                        removeSurroundingSpacesPattern = surroundingSpacesAllPattern;
-                        break;
-                    default:
-                        removeSurroundingSpacesPattern = Pattern.compile("\\s*(</?(?:" + removeSurroundingSpaces.replaceAll(",", "|") + ")(?:>|[\\s/][^>]*>))\\s*", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
+                if (removeSurroundingSpaces.equals(BLOCK_TAGS_MIN)) {
+                    removeSurroundingSpacesPattern = surroundingSpacesMinPattern;
+                } else if (removeSurroundingSpaces.equals(BLOCK_TAGS_MAX)) {
+                    removeSurroundingSpacesPattern = surroundingSpacesMaxPattern;
+                } else if (removeSurroundingSpaces.equals(ALL_TAGS)) {
+                    removeSurroundingSpacesPattern = surroundingSpacesAllPattern;
+                } else {
+                    removeSurroundingSpacesPattern = Pattern.compile("\\s*(</?(?:" + removeSurroundingSpaces.replaceAll(",", "|") + ")(?:>|[\\s/][^>]*>))\\s*", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
                 }
             }
 

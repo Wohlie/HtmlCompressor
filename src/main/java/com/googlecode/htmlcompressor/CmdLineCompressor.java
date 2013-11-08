@@ -452,7 +452,7 @@ public class CmdLineCompressor {
 			map.put(null, outputFilenameOpt);
 		} else {
             //Holds given paths from cmd call
-            ArrayList<File> fileArguments = new ArrayList<>();
+            ArrayList<File> fileArguments = new ArrayList<File>();
 
             //Process all given inputs
             for (String singleFileArg : fileArgsOpt) {
@@ -484,7 +484,7 @@ public class CmdLineCompressor {
             FileFilter fileFilter = new CompressorFileFilter(filemaskOpt, recursiveOpt);
             for (File inputArgument : fileArguments) {
                 //Holds all file dirs in the recursive process
-                ArrayDeque<File> fileStack = new ArrayDeque<>();
+                ArrayDeque<File> fileStack = new ArrayDeque<File>();
                 fileStack.push(inputArgument);
 
                 //Holds the main input path
