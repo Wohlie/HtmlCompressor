@@ -44,7 +44,7 @@ public class HtmlCompressor implements Compressor {
 	 * Predefined pattern that matches <code>&lt;?php ... ?></code> tags.
 	 * Could be passed inside a list to {@link #setPreservePatterns(List) setPreservePatterns} method.
 	 */
-	public static final Pattern PHP_TAG_PATTERN = Pattern.compile("<\\?php.*?(\\?>|$)", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
+	public static final Pattern PHP_TAG_PATTERN = Pattern.compile("(<\\?php.*?(\\?>|$))|(<\\?=.*?\\?>)", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
 
 	/**
 	 * Predefined pattern that matches <code>&lt;% ... %></code> tags.

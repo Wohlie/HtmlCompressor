@@ -671,7 +671,8 @@ public class CmdLineCompressor {
 				+ " --line-break <column num>     Insert a line break after the specified column\n\n"
 
 				+ "Custom Block Preservation Options:\n"
-				+ " --preserve-php                Preserve <?php ... ?> or <?php ... EOF\n"
+				+ " --preserve-php                Preserve <?php ... ?>, <?php ... EOF and\n"
+                + "                               <?= ... ?>\n"
 				+ " --preserve-server-script      Preserve <% ... %> tags\n"
 				+ " --preserve-ssi                Preserve <!--# ... --> tags\n"
 				+ " -p, --preserve <path>         Read regular expressions that define\n"
