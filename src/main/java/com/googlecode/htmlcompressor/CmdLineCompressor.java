@@ -648,7 +648,7 @@ public class CmdLineCompressor {
 				+ "                               Predefined or custom comma separated list of tags\n"
 				+ " --compress-js                 Enable inline JavaScript compression\n"
 				+ " --compress-js-skip-preserve   Disable the JavaScript compression for preserved\n"
-                +"                                user blocks\n"
+                + "                               user blocks\n"
 				+ " --compress-css                Enable inline CSS compression using YUICompressor\n"
                 + " --compress-css-skip-preserve  Disable the CSS compression for preserved\n"
                 + "                               user blocks\n"
