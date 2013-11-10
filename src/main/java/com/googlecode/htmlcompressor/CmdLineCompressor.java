@@ -104,7 +104,7 @@ public class CmdLineCompressor {
 
 	public static void main(String[] args) {
 		CmdLineCompressor cmdLineCompressor = new CmdLineCompressor(args);
-		cmdLineCompressor.process(args);
+		cmdLineCompressor.process();
 	}
 
 	public CmdLineCompressor(String[] args) {
@@ -235,7 +235,7 @@ public class CmdLineCompressor {
 		}
 	}
 
-	public void process(String[] args) {
+	public void process() {
 		try {
 
 			// help
@@ -414,14 +414,14 @@ public class CmdLineCompressor {
 	}
 
 	private Map<String, String> buildInputOutputMap() throws IllegalArgumentException, IOException {
-		Map<String, String> map         = new HashMap<String, String>();
-		File outputFileOrDir            = null;
-        Boolean canOutputMultipleFiles  = null;
+		Map<String, String> map                 = new HashMap<String, String>();
+        Map<String, String> outputFileToInput   = new HashMap<String, String>();
+		File outputFileOrDir                    = null;
 
 		if(outputFilenameOpt != null) {
             //Get the resolved path to the directory or file
-			outputFileOrDir = new File(outputFilenameOpt);
-            File outputDir  = outputFileOrDir.getAbsoluteFile();
+			outputFileOrDir     = (new File(outputFilenameOpt)).getAbsoluteFile();
+            File outputDir      = outputFileOrDir;
 
             //Get the directory that should create or check
 			if(!outputFileOrDir.isDirectory() && !outputFilenameOpt.endsWith("/") && !outputFilenameOpt.endsWith("\\")) {
@@ -434,13 +434,17 @@ public class CmdLineCompressor {
                     "The given output directory or parent directory of the given output file can't create."
                 );
             }
+
+            //Update output as absolute path
+            outputFilenameOpt = outputDir.getPath();
 		}
 
         //Calculate if we can save multiple input files
-        canOutputMultipleFiles = ((null != outputFileOrDir && outputFileOrDir.isDirectory()) || null != outputFilenameSuffixOpt);
+        Boolean canOutputMultipleFiles = (null != outputFileOrDir && outputFileOrDir.isDirectory())
+            || null != outputFilenameSuffixOpt;
 
         //For multiple input files we need a output directory
-		if(fileArgsOpt.length > 1 && canOutputMultipleFiles) {
+        if(fileArgsOpt.length > 1 && !canOutputMultipleFiles) {
 			throw new IllegalArgumentException(
                 String.format(
                     "Output must be a directory with a tailing \"%s\" for multiple input files.", File.separator
@@ -448,36 +452,65 @@ public class CmdLineCompressor {
             );
 		}
 
-		if(fileArgsOpt.length == 0) {
-			map.put(null, outputFilenameOpt);
+		if(0 == fileArgsOpt.length) {
+            //Process standard input
+            if (null == outputFileOrDir || !outputFileOrDir.isDirectory()) {
+                map.put(null, addOutputFilenameSuffix(outputFilenameOpt));
+            } else {
+                throw new IllegalArgumentException("Standard input can only output as standard output or file.");
+            }
 		} else {
             //Holds given paths from cmd call
             ArrayList<File> fileArguments = new ArrayList<File>();
 
             //Process all given inputs
-            for (String singleFileArg : fileArgsOpt) {
-                if (urlPattern.matcher(singleFileArg).matches()) {
+            for (String inputFilePathArg : fileArgsOpt) {
+                //Check if the given input file exists
+                File inputFileArg = new File(inputFilePathArg);
+                if (!inputFileArg.exists()) {
+                    throw new IllegalArgumentException(
+                        String.format("The given input \"%s\" doesn't exist.", inputFilePathArg)
+                    );
+                }
+                inputFileArg = inputFileArg.getAbsoluteFile();
+
+                if (urlPattern.matcher(inputFilePathArg).matches()) {
                     //Process URL
-                    if (fileArgsOpt.length == 1 && (outputFileOrDir == null || !outputFileOrDir.isDirectory())) {
-                        map.put(singleFileArg, outputFilenameOpt);
+                    if (1 == fileArgsOpt.length && (null == outputFileOrDir || !outputFileOrDir.isDirectory())) {
+                        map.put(inputFilePathArg, addOutputFilenameSuffix(outputFilenameOpt));
                     } else {
-                        throw new IllegalArgumentException("Input URL should be single and cannot have directory as output");
+                        throw new IllegalArgumentException(
+                            "Input URL should be a single input and only output as standard output or file."
+                        );
+                    }
+                } else if (null == outputFileOrDir) {
+                    //Process standard output
+                    if (1 == fileArgsOpt.length) {
+                        if (inputFileArg.isFile()) {
+                            map.put(inputFilePathArg, outputFilenameOpt);
+                        } else {
+                            throw new IllegalArgumentException(
+                                "Only a single file or standard input can process if no output is defined."
+                            );
+                        }
+                    } else {
+                        throw new IllegalArgumentException(
+                            "If no output is defined only a single input can process."
+                        );
                     }
                 } else {
-                    //Process file or dir
-                    File inputFileOrDir = new File(singleFileArg).getAbsoluteFile();
-
                     //Throw an exception if we process a directory but we can't save multiple files
-                    if (!canOutputMultipleFiles && inputFileOrDir.isDirectory()) {
+                    if (!canOutputMultipleFiles && inputFileArg.isDirectory()) {
                         throw new IllegalArgumentException(
                             String.format(
-                                "Output must be a directory with a tailing \"%s\" for multiple input files.", File.separator
+                                "Output must be a directory with a tailing \"%s\" for multiple input files.",
+                                File.separator
                             )
                         );
                     }
 
                     //Add the given dir or file to the stack for conversion
-                    fileArguments.add(inputFileOrDir);
+                    fileArguments.add(inputFileArg);
                 }
             }
 
@@ -487,8 +520,13 @@ public class CmdLineCompressor {
                 ArrayDeque<File> fileStack = new ArrayDeque<File>();
                 fileStack.push(inputArgument);
 
-                //Holds the main input path
-                String inputArgumentPath = inputArgument.getPath();
+                //Holds the main input path dir
+                String inputArgumentPath;
+                if (inputArgument.isFile()) {
+                    inputArgumentPath = inputArgument.getParent();
+                } else {
+                    inputArgumentPath = inputArgument.getPath();
+                }
 
                 //Collect all input files from the given directories from the given settings and the corresponding output files
                 while (!fileStack.isEmpty()) {
@@ -504,31 +542,17 @@ public class CmdLineCompressor {
 
                         //Rewrite the base path to the defined output dir
                         if (null != outputFileOrDir) {
-                            outputFilePath = inputFilePath.replaceFirst(Pattern.quote(inputArgumentPath), Matcher.quoteReplacement(outputFileOrDir.getPath()));
+                            outputFilePath = inputFilePath.replaceFirst(
+                                Pattern.quote(inputArgumentPath),
+                                Matcher.quoteReplacement(outputFileOrDir.getPath())
+                            );
                         } else {
                             outputFilePath = inputFilePath;
                         }
 
-                        File outputDir = new File(outputFilePath);
-
-                        //Add a suffix to the file
-                        if (null != outputFilenameSuffixOpt) {
-                            StringBuilder buffer    = new StringBuilder(outputFilePath);
-                            String outputFileName   = outputDir.getName();
-                            int insertPos           = outputFileName.lastIndexOf('.');
-
-                            //Append the suffix at the right position
-                            if (-1 == insertPos) {
-                                buffer.append(outputFilenameSuffixOpt);
-                            } else {
-                                buffer.insert(outputFilePath.length() - outputFileName.length() + insertPos, outputFilenameSuffixOpt);
-                            }
-
-                            outputFilePath = buffer.toString();
-                        }
-
-                        //Get the output path
-                        outputDir = outputDir.getParentFile();
+                        //Add the output file name suffix and get the parent dir
+                        outputFilePath = addOutputFilenameSuffix(outputFilePath);
+                        File outputDir = (new File(outputFilePath)).getParentFile();
 
                         //Check if the dir was successful created
                         if (!outputDir.isDirectory() && !outputDir.mkdirs())  {
@@ -538,7 +562,19 @@ public class CmdLineCompressor {
                         }
 
                         //Add the file
-                        map.put(inputFilePath, outputFilePath);
+                        if (!outputFileToInput.containsKey(outputFilePath)) {
+                            outputFileToInput.put(outputFilePath, inputFilePath);
+                            map.put(inputFilePath, outputFilePath);
+                        } else {
+                            throw new IllegalArgumentException(
+                                String.format(
+                                    "The output file \"%s\" will used from the two input files \"%s\" and \"%s\".",
+                                    outputFilePath,
+                                    inputFilePath,
+                                    outputFileToInput.get(outputFilePath)
+                                )
+                            );
+                        }
                     }
                 }
             }
@@ -546,11 +582,39 @@ public class CmdLineCompressor {
 
         //Check if we have files to process
         if (0 == map.size()) {
-            throw new IllegalArgumentException("No input files found to optimize.");
+            throw new IllegalArgumentException("No input files found.");
         }
 
 		return map;
 	}
+
+    /**
+     * Add the configured output suffix to the file name.
+     *
+     * @param   outputFilePath
+     * @return  File path with the configured file name suffix.
+     */
+    private String addOutputFilenameSuffix(String outputFilePath)
+    {
+        //Add a suffix to the file
+        if (null != outputFilenameSuffixOpt && null != outputFilePath) {
+            StringBuilder buffer    = new StringBuilder(outputFilePath);
+            File outputDir          = new File(outputFilePath);
+            String outputFileName   = outputDir.getName();
+            int insertPos           = outputFileName.lastIndexOf('.');
+
+            //Append the suffix at the right position
+            if (-1 == insertPos) {
+                buffer.append(outputFilenameSuffixOpt);
+            } else {
+                buffer.insert(outputFilePath.length() - outputFileName.length() + insertPos, outputFilenameSuffixOpt);
+            }
+
+            return buffer.toString();
+        }
+
+        return outputFilePath;
+    }
 
 	private BufferedReader buildReader(String filename) throws IOException {
 
@@ -616,7 +680,7 @@ public class CmdLineCompressor {
 				+ " -t, --type <html|xml>         If not provided autodetects from file extension\n"
                 + " -c, --charset <charset>       Charset for reading files, UTF-8 by default\n"
                 + " -r, --recursive               Process files inside subdirectories\n"
-				+ " -m, --mask <filemask>         Filter input files by mask\n"
+				+ " -m, --mask <filemask;...>     Filter input files by mask\n"
 				+ " -o, --output <path>           Filename or directory for compression results.\n"
 				+ "                               If none provided outputs result to <stdout>\n"
                 + " -s, --output-suffix <suffix>  Saves the compression result under the input name\n"
