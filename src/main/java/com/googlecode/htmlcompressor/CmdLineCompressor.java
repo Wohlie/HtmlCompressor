@@ -1,9 +1,12 @@
-/*
+/**
+ * Copyright 2009 - 2012    Sergiy Kovalchuk the original author or other authors.
+ * Copyright 2013           Erik Wohllebe <erik.wohllebe@googlemail.com>.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -417,6 +420,9 @@ public class CmdLineCompressor {
 		Map<String, String> map                 = new HashMap<String, String>();
         Map<String, String> outputFileToInput   = new HashMap<String, String>();
 		File outputFileOrDir                    = null;
+        Boolean isDirOutput                     = false;
+        Boolean isFileOutput                    = false;
+        Boolean isStandardOutput                = false;
 
 		if(outputFilenameOpt != null) {
             //Get the resolved path to the directory or file
@@ -425,8 +431,11 @@ public class CmdLineCompressor {
 
             //Get the directory that should create or check
 			if(!outputFileOrDir.isDirectory() && !outputFilenameOpt.endsWith("/") && !outputFilenameOpt.endsWith("\\")) {
-                outputDir = outputFileOrDir.getParentFile();
-			}
+                outputDir       = outputFileOrDir.getParentFile();
+                isFileOutput    = true;
+			} else {
+                isDirOutput     = true;
+            }
 
             //Try to create the path
             if (!outputDir.isDirectory() && !outputDir.mkdirs()) {
@@ -436,12 +445,13 @@ public class CmdLineCompressor {
             }
 
             //Update output as absolute path
-            outputFilenameOpt = outputDir.getPath();
-		}
+            outputFilenameOpt = outputFileOrDir.getPath();
+		} else {
+            isStandardOutput = outputFilenameSuffixOpt == null;
+        }
 
         //Calculate if we can save multiple input files
-        Boolean canOutputMultipleFiles = (null != outputFileOrDir && outputFileOrDir.isDirectory())
-            || null != outputFilenameSuffixOpt;
+        Boolean canOutputMultipleFiles = isDirOutput || null != outputFilenameSuffixOpt;
 
         //For multiple input files we need a output directory
         if(fileArgsOpt.length > 1 && !canOutputMultipleFiles) {
@@ -454,7 +464,7 @@ public class CmdLineCompressor {
 
 		if(0 == fileArgsOpt.length) {
             //Process standard input
-            if (null == outputFileOrDir || !outputFileOrDir.isDirectory()) {
+            if (isStandardOutput || isFileOutput) {
                 map.put(null, addOutputFilenameSuffix(outputFilenameOpt));
             } else {
                 throw new IllegalArgumentException("Standard input can only output as standard output or file.");
@@ -464,53 +474,56 @@ public class CmdLineCompressor {
             ArrayList<File> fileArguments = new ArrayList<File>();
 
             //Process all given inputs
-            for (String inputFilePathArg : fileArgsOpt) {
-                //Check if the given input file exists
-                File inputFileArg = new File(inputFilePathArg);
-                if (!inputFileArg.exists()) {
-                    throw new IllegalArgumentException(
-                        String.format("The given input \"%s\" doesn't exist.", inputFilePathArg)
-                    );
-                }
-                inputFileArg = inputFileArg.getAbsoluteFile();
-
-                if (urlPattern.matcher(inputFilePathArg).matches()) {
+            for (String inputFileOrDirArg : fileArgsOpt) {
+                if (urlPattern.matcher(inputFileOrDirArg).matches()) {
                     //Process URL
-                    if (1 == fileArgsOpt.length && (null == outputFileOrDir || !outputFileOrDir.isDirectory())) {
-                        map.put(inputFilePathArg, addOutputFilenameSuffix(outputFilenameOpt));
+                    if (1 == fileArgsOpt.length && isStandardOutput || isFileOutput) {
+                        map.put(inputFileOrDirArg, addOutputFilenameSuffix(outputFilenameOpt));
                     } else {
                         throw new IllegalArgumentException(
                             "Input URL should be a single input and only output as standard output or file."
                         );
                     }
-                } else if (null == outputFileOrDir) {
-                    //Process standard output
-                    if (1 == fileArgsOpt.length) {
-                        if (inputFileArg.isFile()) {
-                            map.put(inputFilePathArg, outputFilenameOpt);
+                } else {
+                    //Check if the given input file exists
+                    File inputFileOrDir = new File(inputFileOrDirArg);
+                    if (!inputFileOrDir.exists()) {
+                        throw new IllegalArgumentException(
+                            String.format("The given input \"%s\" doesn't exist.", inputFileOrDirArg)
+                        );
+                    }
+                    inputFileOrDir = inputFileOrDir.getAbsoluteFile();
+
+                    //On standard output or file output we are only able to process a single file
+                    if (isStandardOutput || isFileOutput) {
+                        //Process standard output
+                        if (1 == fileArgsOpt.length) {
+                            if (inputFileOrDir.isFile()) {
+                                map.put(inputFileOrDir.getPath(), addOutputFilenameSuffix(outputFilenameOpt));
+                            } else {
+                                throw new IllegalArgumentException(
+                                    "Only a single file or standard input can process if no output or a output file is defined."
+                                );
+                            }
                         } else {
                             throw new IllegalArgumentException(
-                                "Only a single file or standard input can process if no output is defined."
+                                "On standard output and file output only a single input can process."
                             );
                         }
                     } else {
-                        throw new IllegalArgumentException(
-                            "If no output is defined only a single input can process."
-                        );
-                    }
-                } else {
-                    //Throw an exception if we process a directory but we can't save multiple files
-                    if (!canOutputMultipleFiles && inputFileArg.isDirectory()) {
-                        throw new IllegalArgumentException(
-                            String.format(
-                                "Output must be a directory with a tailing \"%s\" for multiple input files.",
-                                File.separator
-                            )
-                        );
-                    }
+                        //Throw an exception if we process a directory but we can't save multiple files
+                        if (!canOutputMultipleFiles && inputFileOrDir.isDirectory()) {
+                            throw new IllegalArgumentException(
+                                String.format(
+                                    "Output must be a directory with a tailing \"%s\" for multiple input files.",
+                                    File.separator
+                                )
+                            );
+                        }
 
-                    //Add the given dir or file to the stack for conversion
-                    fileArguments.add(inputFileArg);
+                        //Add the given dir or file to the stack for conversion
+                        fileArguments.add(inputFileOrDir);
+                    }
                 }
             }
 
@@ -570,8 +583,8 @@ public class CmdLineCompressor {
                                 String.format(
                                     "The output file \"%s\" will used from the two input files \"%s\" and \"%s\".",
                                     outputFilePath,
-                                    inputFilePath,
-                                    outputFileToInput.get(outputFilePath)
+                                    outputFileToInput.get(outputFilePath),
+                                    inputFilePath
                                 )
                             );
                         }
