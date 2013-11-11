@@ -18,37 +18,37 @@ Here are few examples of YaHc results with default settings:
     <th>Plain Ratio / gziped Ratio</th>
   </tr>
   <tr>
-    <td><a href="https://github.com/">github.com</a></td>
+    <td><a href="https://github.com/" target="_blank">github.com</a></td>
     <td>12,553b / &nbsp;3,745b</td>
     <td>&nbsp;10,788b / &nbsp;3,475b</td>
     <td>14.06% / &nbsp;7.21%</td>
   </tr>
   <tr>
-    <td><a href="http://stackoverflow.com/">stackoverflow.com</a></td>
+    <td><a href="http://stackoverflow.com/" target="_blank">stackoverflow.com</a></td>
     <td>195,049b / 30,660b</td>
     <td>166,124b / 29,546b</td>
     <td>14.83% / &nbsp;3.63%</td>
   </tr>
   <tr>
-    <td><a href="http://magento.com/">magento.com</a></td>
+    <td><a href="http://magento.com/" target="_blank">magento.com</a></td>
     <td>62,500b / 14,319b</td>
     <td>&nbsp;46,117b / 11,798b</td>
     <td>26.21% / 17.61%</td>
   </tr>
   <tr>
-    <td><a href="http://cnn.com/">cnn.com</a></td>
+    <td><a href="http://cnn.com/" target="_blank">cnn.com</a></td>
     <td>126,382b / 24,510b</td>
     <td>123,170b / 23,902b</td>
     <td>&nbsp;2.54% / &nbsp;2.48%</td>
   </tr>
   <tr>
-    <td><a href="http://www.stern.de/">www.stern.de</a></td>
+    <td><a href="http://www.stern.de/" target="_blank">www.stern.de</a></td>
     <td>230,186b / 36,333b</td>
     <td>190,388b / 34,019b</td>
     <td>17.29% / &nbsp;6.37%</td>
   </tr>
   <tr>
-    <td><a href="http://www.spiegel.de/">www.spiegel.de</a></td>
+    <td><a href="http://www.spiegel.de/" target="_blank">www.spiegel.de</a></td>
     <td>204,923b / 38,119b</td>
     <td>193,044b / 36,637b</td>
     <td>&nbsp;5.80% / &nbsp;3.89%</td>
