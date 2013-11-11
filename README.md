@@ -2,7 +2,7 @@ YaHc (Yet another HTML compressor)
 ==============
 YaHc is a fork of [**HTMLCompressor**](https://code.google.com/p/htmlcompressor/).
 YaHc is a small, fast and easy to use command line tool and Java library that
-minifies HTML or XML source by removing extra whitespaces, comments and other
+minifies HTML or XML sources by removing extra whitespaces, comments and other
 unneeded characters without breaking the content structure. As a result pages
 become smaller in size and load faster. By providing  additional libraries
 like [**YUI Compressor**](https://github.com/yui/yuicompressor/) or [**Google
@@ -19,39 +19,39 @@ Here are few examples of YaHc results with default settings:
   </tr>
   <tr>
     <td><a href="https://github.com/" target="_blank">github.com</a></td>
-    <td>12,553b / &nbsp;3,745b</td>
-    <td>&nbsp;10,788b / &nbsp;3,475b</td>
-    <td>14.06% / &nbsp;7.21%</td>
+    <td><pre> 12,553b /  3,745b</pre></td>
+    <td><pre> 10,788b /  3,475b</pre></td>
+    <td><pre>14.06% /  7.21%</pre></td>
   </tr>
   <tr>
     <td><a href="http://stackoverflow.com/" target="_blank">stackoverflow.com</a></td>
-    <td>195,049b / 30,660b</td>
-    <td>166,124b / 29,546b</td>
-    <td>14.83% / &nbsp;3.63%</td>
+    <td><pre>195,049b / 30,660b</pre></td>
+    <td><pre>166,124b / 29,546b</pre></td>
+    <td><pre>14.83% /  3.63%</pre></td>
   </tr>
   <tr>
     <td><a href="http://magento.com/" target="_blank">magento.com</a></td>
-    <td>62,500b / 14,319b</td>
-    <td>&nbsp;46,117b / 11,798b</td>
-    <td>26.21% / 17.61%</td>
+    <td><pre> 62,500b / 14,319b</pre></td>
+    <td><pre> 46,117b / 11,798b</pre></td>
+    <td><pre>26.21% / 17.61%</pre></td>
   </tr>
   <tr>
     <td><a href="http://cnn.com/" target="_blank">cnn.com</a></td>
-    <td>126,382b / 24,510b</td>
-    <td>123,170b / 23,902b</td>
-    <td>&nbsp;2.54% / &nbsp;2.48%</td>
+    <td><pre>126,382b / 24,510b</pre></td>
+    <td><pre>123,170b / 23,902b</pre></td>
+    <td><pre> 2.54% /  2.48%</pre></td>
   </tr>
   <tr>
     <td><a href="http://www.stern.de/" target="_blank">www.stern.de</a></td>
-    <td>230,186b / 36,333b</td>
-    <td>190,388b / 34,019b</td>
-    <td>17.29% / &nbsp;6.37%</td>
+    <td><pre>230,186b / 36,333b</pre></td>
+    <td><pre>190,388b / 34,019b</pre></td>
+    <td><pre>17.29% /  6.37%</pre></td>
   </tr>
   <tr>
     <td><a href="http://www.spiegel.de/" target="_blank">www.spiegel.de</a></td>
-    <td>204,923b / 38,119b</td>
-    <td>193,044b / 36,637b</td>
-    <td>&nbsp;5.80% / &nbsp;3.89%</td>
+    <td><pre>204,923b / 38,119b</pre></td>
+    <td><pre>193,044b / 36,637b</pre></td>
+    <td><pre> 5.80% /  3.89%</pre></td>
   </tr>
 </table>
 
