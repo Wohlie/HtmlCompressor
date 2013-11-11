@@ -10,14 +10,55 @@ Closure Compiler**](https://code.google.com/p/closure-compiler/) YaHc can
 automatically optimize JS and CSS parts in the given input.
 
 Here are few examples of YaHc results with default settings:
-Site                                                | Plain Size / gziped Size  | YaHc Size / gziped Size   | Plain Ratio / gziped Ratio
-:---                                                | :---:                     | :---:                     | :---:
-[**github.com**](https://github.com/)               | ` 12,553b /  3,745b`      | ` 10,788b /  3,475b`      | `14.06% /  7.21%`
-[**stackoverflow.com**](http://stackoverflow.com/)  | `195,049b / 30,660b`      | `166,124b / 29,546b`      | `14.83% /  3.63%`
-[**magento.com**](http://magento.com/)              | ` 62,500b / 14,319b`      | ` 46,117b / 11,798b`      | `26.21% / 17.61%`
-[**cnn.com**](http://cnn.com/)                      | `126,382b / 24,510b`      | `123,170b / 23,902b`      | ` 2.54% /  2.48%`
-[**stern.de**](http://www.stern.de/)                | `230,186b / 36,333b`      | `190,388b / 34,019b`      | `17.29% /  6.37%`
-[**spiegel.de**](http://www.spiegel.de/)            | `204,923b / 38,119b`      | `193,044b / 36,637b`      | ` 5.80% /  3.89%`
+<table>
+  <tr>
+    <th>Site</th>
+    <th>Plain Size / gziped Size</th>
+    <th>YaHc Size / gziped Size</th>
+    <th>Plain Ratio / gziped Ratio</th>
+  </tr>
+  <tr>
+    <td><a href="https://github.com/">github.com</a></td>
+    <td>12,553b / &nbsp;3,745b</td>
+    <td>&nbsp;10,788b / &nbsp;3,475b</td>
+    <td>14.06% / &nbsp;7.21%</td>
+  </tr>
+  <tr>
+    <td><a href="http://stackoverflow.com/">stackoverflow.com</a></td>
+    <td>195,049b / 30,660b</td>
+    <td>166,124b / 29,546b</td>
+    <td>14.83% / &nbsp;3.63%</td>
+  </tr>
+  <tr>
+    <td><a href="http://magento.com/">magento.com</a></td>
+    <td>62,500b / 14,319b</td>
+    <td>&nbsp;46,117b / 11,798b</td>
+    <td>26.21% / 17.61%</td>
+  </tr>
+  <tr>
+    <td><a href="http://cnn.com/">cnn.com</a></td>
+    <td>126,382b / 24,510b</td>
+    <td>123,170b / 23,902b</td>
+    <td>&nbsp;2.54% / &nbsp;2.48%</td>
+  </tr>
+  <tr>
+    <td><a href="http://www.stern.de/">www.stern.de</a></td>
+    <td>230,186b / 36,333b</td>
+    <td>190,388b / 34,019b</td>
+    <td>17.29% / &nbsp;6.37%</td>
+  </tr>
+  <tr>
+    <td><a href="http://www.spiegel.de/">www.spiegel.de</a></td>
+    <td>204,923b / 38,119b</td>
+    <td>193,044b / 36,637b</td>
+    <td>&nbsp;5.80% / &nbsp;3.89%</td>
+  </tr>
+</table>
+
+## Requirements
+ - JRE v6
+ - [**YUI Compressor**](https://github.com/yui/yuicompressor/) (optional)
+ - [**Google Closure Compiler**](https://code.google.com/p/closure-compiler/) (optional)
 
 ## Usage
     Usage: java -jar yahc.jar [options] [input]
