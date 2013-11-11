@@ -15,74 +15,71 @@
  */
 package com.googlecode.htmlcompressor.taglib;
 
-import java.io.IOException;
+import com.googlecode.htmlcompressor.compressor.HtmlCompressor;
+import com.googlecode.htmlcompressor.compressor.YuiCssCompressor;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyContent;
 import javax.servlet.jsp.tagext.BodyTagSupport;
-
-import com.googlecode.htmlcompressor.compressor.HtmlCompressor;
-import com.googlecode.htmlcompressor.compressor.YuiCssCompressor;
+import java.io.IOException;
 
 /**
  * JSP tag that compresses an CSS content within &lt;compress:css> using <a href="http://developer.yahoo.com/yui/compressor/">Yahoo YUI Compressor</a>.
  * All CSS-related properties from {@link HtmlCompressor} are supported.
  *
+ * @author <a href="mailto:serg472@gmail.com">Sergiy Kovalchuk</a>
  * @see HtmlCompressor
  * @see <a href="http://developer.yahoo.com/yui/compressor/">Yahoo YUI Compressor</a>
- *
- * @author <a href="mailto:serg472@gmail.com">Sergiy Kovalchuk</a>
  */
 @SuppressWarnings("serial")
 public class CssCompressorTag extends BodyTagSupport {
 
-	private boolean enabled = true;
+    private boolean enabled = true;
 
-	//YUICompressor settings
-	private int yuiCssLineBreak = -1;
+    //YUICompressor settings
+    private int yuiCssLineBreak = -1;
 
-	@Override
-	public int doEndTag() throws JspException {
+    @Override
+    public int doEndTag() throws JspException {
 
-		BodyContent bodyContent = getBodyContent();
-		String content = bodyContent.getString();
+        BodyContent bodyContent = getBodyContent();
+        String content = bodyContent.getString();
 
-		try {
-			if(enabled) {
-				//call YUICompressor
-				YuiCssCompressor compressor = new YuiCssCompressor();
-				compressor.setLineBreak(yuiCssLineBreak);
-				String result = compressor.compress(content);
+        try {
+            if (enabled) {
+                //call YUICompressor
+                YuiCssCompressor compressor = new YuiCssCompressor();
+                compressor.setLineBreak(yuiCssLineBreak);
+                String result = compressor.compress(content);
 
-				bodyContent.clear();
-				bodyContent.append(result);
-				bodyContent.writeOut(pageContext.getOut());
-			} else {
-				bodyContent.clear();
-				bodyContent.append(content);
-				bodyContent.writeOut(pageContext.getOut());
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+                bodyContent.clear();
+                bodyContent.append(result);
+                bodyContent.writeOut(pageContext.getOut());
+            } else {
+                bodyContent.clear();
+                bodyContent.append(content);
+                bodyContent.writeOut(pageContext.getOut());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-		return super.doEndTag();
-	}
+        return super.doEndTag();
+    }
 
-	/**
-	 * @see HtmlCompressor#setYuiCssLineBreak(int)
-	 */
-	public void setYuiCssLineBreak(int yuiCssLineBreak) {
-		this.yuiCssLineBreak = yuiCssLineBreak;
-	}
+    /**
+     * @see HtmlCompressor#setYuiCssLineBreak(int)
+     */
+    public void setYuiCssLineBreak(int yuiCssLineBreak) {
+        this.yuiCssLineBreak = yuiCssLineBreak;
+    }
 
-	/**
-	 * @see HtmlCompressor#setEnabled(boolean)
-	 */
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
-	}
-
+    /**
+     * @see HtmlCompressor#setEnabled(boolean)
+     */
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
 }

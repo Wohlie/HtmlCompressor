@@ -22,8 +22,7 @@ import java.io.File;
 import java.util.Map;
 
 public class StandardInput
-    extends AbstractCmd
-{
+    extends AbstractCmd {
 
     /**
      * Test standard input and standard output as output.
@@ -32,7 +31,7 @@ public class StandardInput
      */
     @Test
     public void testSingleInputStdOutput() throws Throwable {
-        String[] args   = {
+        String[] args = {
         };
 
         Map<String, String> map = getInputOutputMap(args);
@@ -48,8 +47,8 @@ public class StandardInput
      */
     @Test
     public void testSingleInputToFile() throws Throwable {
-        File outputFile     = new File(outputDirPath + "temp.html");
-        String[] args       = {
+        File outputFile = new File(outputDirPath + "temp.html");
+        String[] args = {
             "-o",
             outputFile.getPath(),
         };
@@ -67,9 +66,9 @@ public class StandardInput
      */
     @Test
     public void testSingleInputToFileWithSuffix() throws Throwable {
-        File outputFile     = new File(outputDirPath + "temp.html");
+        File outputFile = new File(outputDirPath + "temp.html");
         File realOutputFile = new File(outputDirPath + "temp-min.html");
-        String[] args       = {
+        String[] args = {
             "-o",
             outputFile.getPath(),
             "-s",
@@ -89,7 +88,7 @@ public class StandardInput
      */
     @Test
     public void testSingleInputToDirectory() throws Throwable {
-        String[] args   = {
+        String[] args = {
             "-o",
             outputDirPath,
         };
@@ -112,7 +111,7 @@ public class StandardInput
      */
     @Test
     public void testSingleInputToDirectoryWithSuffix() throws Throwable {
-        String[] args   = {
+        String[] args = {
             "-o",
             outputDirPath,
             "-s",

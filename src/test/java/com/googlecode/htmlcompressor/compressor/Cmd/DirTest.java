@@ -22,8 +22,7 @@ import java.io.File;
 import java.util.Map;
 
 public class DirTest
-    extends AbstractCmd
-{
+    extends AbstractCmd {
     /**
      * Test a single directory as input and the standard output as output.
      *
@@ -31,7 +30,7 @@ public class DirTest
      */
     @Test
     public void testSingleInputStdOutput() throws Throwable {
-        String[] args   = {
+        String[] args = {
             inputDirPath,
         };
 
@@ -54,13 +53,13 @@ public class DirTest
      */
     @Test
     public void testSingleInputToWithSuffix() throws Throwable {
-        File inputFileFoo   = new File(inputDirPath + "foo.html");
-        File inputFileBar   = new File(inputDirPath + "bar.html");
-        File inputFileTest  = new File(inputDirPath + "test.phtml");
-        File outputFileFoo  = new File(inputDirPath + "foo-min.html");
-        File outputFileBar  = new File(inputDirPath + "bar-min.html");
+        File inputFileFoo = new File(inputDirPath + "foo.html");
+        File inputFileBar = new File(inputDirPath + "bar.html");
+        File inputFileTest = new File(inputDirPath + "test.phtml");
+        File outputFileFoo = new File(inputDirPath + "foo-min.html");
+        File outputFileBar = new File(inputDirPath + "bar-min.html");
         File outputFileTest = new File(inputDirPath + "test-min.phtml");
-        String[] args       = {
+        String[] args = {
             "-s",
             "-min",
             inputDirPath,
@@ -86,7 +85,7 @@ public class DirTest
      */
     @Test
     public void testSingleInputToFile() throws Throwable {
-        String[] args   = {
+        String[] args = {
             "-o",
             inputDirPath + "foo.html",
             inputDirPath,
@@ -110,13 +109,13 @@ public class DirTest
      */
     @Test
     public void testSingleInputToDirectory() throws Throwable {
-        File inputFileFoo   = new File(inputDirPath + "foo.html");
-        File inputFileBar   = new File(inputDirPath + "bar.html");
-        File inputFileTest  = new File(inputDirPath + "test.phtml");
-        File outputFileFoo  = new File(outputDirPath + "foo.html");
-        File outputFileBar  = new File(outputDirPath + "bar.html");
+        File inputFileFoo = new File(inputDirPath + "foo.html");
+        File inputFileBar = new File(inputDirPath + "bar.html");
+        File inputFileTest = new File(inputDirPath + "test.phtml");
+        File outputFileFoo = new File(outputDirPath + "foo.html");
+        File outputFileBar = new File(outputDirPath + "bar.html");
         File outputFileTest = new File(outputDirPath + "test.phtml");
-        String[] args       = {
+        String[] args = {
             "-o",
             outputDirPath,
             inputDirPath,
@@ -142,13 +141,13 @@ public class DirTest
      */
     @Test
     public void testSingleInputToDirectoryWithSuffix() throws Throwable {
-        File inputFileFoo   = new File(inputDirPath + "foo.html");
-        File inputFileBar   = new File(inputDirPath + "bar.html");
-        File inputFileTest  = new File(inputDirPath + "test.phtml");
-        File outputFileFoo  = new File(outputDirPath + "foo-min.html");
-        File outputFileBar  = new File(outputDirPath + "bar-min.html");
+        File inputFileFoo = new File(inputDirPath + "foo.html");
+        File inputFileBar = new File(inputDirPath + "bar.html");
+        File inputFileTest = new File(inputDirPath + "test.phtml");
+        File outputFileFoo = new File(outputDirPath + "foo-min.html");
+        File outputFileBar = new File(outputDirPath + "bar-min.html");
         File outputFileTest = new File(outputDirPath + "test-min.phtml");
-        String[] args       = {
+        String[] args = {
             "-o",
             outputDirPath,
             "-s",
@@ -176,11 +175,11 @@ public class DirTest
      */
     @Test
     public void testSingleInputToDirectoryWithFileMask() throws Throwable {
-        File inputFileFoo   = new File(inputDirPath + "foo.html");
-        File inputFileBar   = new File(inputDirPath + "bar.html");
-        File outputFileFoo  = new File(outputDirPath + "foo.html");
-        File outputFileBar  = new File(outputDirPath + "bar.html");
-        String[] args       = {
+        File inputFileFoo = new File(inputDirPath + "foo.html");
+        File inputFileBar = new File(inputDirPath + "bar.html");
+        File outputFileFoo = new File(outputDirPath + "foo.html");
+        File outputFileBar = new File(outputDirPath + "bar.html");
+        String[] args = {
             "-o",
             outputDirPath,
             "-m",
@@ -205,11 +204,11 @@ public class DirTest
      */
     @Test
     public void testSingleInputToDirectoryWithSuffixAndFileMask() throws Throwable {
-        File inputFileFoo   = new File(inputDirPath + "foo.html");
-        File inputFileBar   = new File(inputDirPath + "bar.html");
-        File outputFileFoo  = new File(outputDirPath + "foo-min.html");
-        File outputFileBar  = new File(outputDirPath + "bar-min.html");
-        String[] args       = {
+        File inputFileFoo = new File(inputDirPath + "foo.html");
+        File inputFileBar = new File(inputDirPath + "bar.html");
+        File outputFileFoo = new File(outputDirPath + "foo-min.html");
+        File outputFileBar = new File(outputDirPath + "bar-min.html");
+        String[] args = {
             "-o",
             outputDirPath,
             "-s",
@@ -236,7 +235,7 @@ public class DirTest
      */
     @Test
     public void testSingleInputWithNoFiles() throws Throwable {
-        String[] args   = {
+        String[] args = {
             "-o",
             outputDirPath,
             inputDirPath + "empty",
@@ -260,7 +259,7 @@ public class DirTest
      */
     @Test
     public void testSingleInputToDirectoryWithFileMaskNoFiles() throws Throwable {
-        String[] args   = {
+        String[] args = {
             "-o",
             outputDirPath,
             "-m",
@@ -286,17 +285,17 @@ public class DirTest
      */
     @Test
     public void testMultipleInputToDirectory() throws Throwable {
-        File inputFileFoo       = new File(inputDirPath + "foo.html");
-        File inputFileBar       = new File(inputDirPath + "bar.html");
-        File inputFileTest      = new File(inputDirPath + "test.phtml");
-        File inputFileFoobar    = new File(inputDirPath + "other/other/Foobar.html");
-        File inputFileTmp       = new File(inputDirPath + "other/other/tmp");
-        File outputFileFoo      = new File(outputDirPath + "foo.html");
-        File outputFileBar      = new File(outputDirPath + "bar.html");
-        File outputFileTest     = new File(outputDirPath + "test.phtml");
-        File outputFileFoobar   = new File(outputDirPath + "Foobar.html");
-        File outputFileTmp      = new File(outputDirPath + "tmp");
-        String[] args           = {
+        File inputFileFoo = new File(inputDirPath + "foo.html");
+        File inputFileBar = new File(inputDirPath + "bar.html");
+        File inputFileTest = new File(inputDirPath + "test.phtml");
+        File inputFileFoobar = new File(inputDirPath + "other/other/Foobar.html");
+        File inputFileTmp = new File(inputDirPath + "other/other/tmp");
+        File outputFileFoo = new File(outputDirPath + "foo.html");
+        File outputFileBar = new File(outputDirPath + "bar.html");
+        File outputFileTest = new File(outputDirPath + "test.phtml");
+        File outputFileFoobar = new File(outputDirPath + "Foobar.html");
+        File outputFileTmp = new File(outputDirPath + "tmp");
+        String[] args = {
             "-o",
             outputDirPath,
             inputDirPath,
@@ -329,17 +328,17 @@ public class DirTest
      */
     @Test
     public void testMultipleInputToDirectoryWithSuffix() throws Throwable {
-        File inputFileFoo       = new File(inputDirPath + "foo.html");
-        File inputFileBar       = new File(inputDirPath + "bar.html");
-        File inputFileTest      = new File(inputDirPath + "test.phtml");
-        File inputFileFoobar    = new File(inputDirPath + "other/other/Foobar.html");
-        File inputFileTmp       = new File(inputDirPath + "other/other/tmp");
-        File outputFileFoo      = new File(outputDirPath + "foo-test.html");
-        File outputFileBar      = new File(outputDirPath + "bar-test.html");
-        File outputFileTest     = new File(outputDirPath + "test-test.phtml");
-        File outputFileFoobar   = new File(outputDirPath + "Foobar-test.html");
-        File outputFileTmp      = new File(outputDirPath + "tmp-test");
-        String[] args           = {
+        File inputFileFoo = new File(inputDirPath + "foo.html");
+        File inputFileBar = new File(inputDirPath + "bar.html");
+        File inputFileTest = new File(inputDirPath + "test.phtml");
+        File inputFileFoobar = new File(inputDirPath + "other/other/Foobar.html");
+        File inputFileTmp = new File(inputDirPath + "other/other/tmp");
+        File outputFileFoo = new File(outputDirPath + "foo-test.html");
+        File outputFileBar = new File(outputDirPath + "bar-test.html");
+        File outputFileTest = new File(outputDirPath + "test-test.phtml");
+        File outputFileFoobar = new File(outputDirPath + "Foobar-test.html");
+        File outputFileTmp = new File(outputDirPath + "tmp-test");
+        String[] args = {
             "-o",
             outputDirPath,
             "-s",
@@ -374,10 +373,10 @@ public class DirTest
      */
     @Test
     public void testMultipleInputToDirectoryWithTheSameFile() throws Throwable {
-        File outputFileBar  = new File(outputDirPath + "bar.html");
-        File inputFileBar1  = new File(inputDirPath + "bar.html");
-        File inputFileBar2  = new File(inputDirPath + "other/bar.html");
-        String[] args       = {
+        File outputFileBar = new File(outputDirPath + "bar.html");
+        File inputFileBar1 = new File(inputDirPath + "bar.html");
+        File inputFileBar2 = new File(inputDirPath + "other/bar.html");
+        String[] args = {
             "-o",
             outputDirPath,
             inputDirPath,
@@ -407,13 +406,13 @@ public class DirTest
      */
     @Test
     public void testRecursiveSingleInputToDirectoryWithSuffixAndFileMask() throws Throwable {
-        File inputFileBar       = new File(inputDirPath + "other/bar.html");
-        File inputFileBaz       = new File(inputDirPath + "other/baz.html");
-        File inputFileFoobar    = new File(inputDirPath + "other/other/Foobar.html");
-        File outputFileBar      = new File(outputDirPath + "bar-test.html");
-        File outputFileBaz      = new File(outputDirPath + "baz-test.html");
-        File outputFileFoobar   = new File(outputDirPath + "other/Foobar-test.html");
-        String[] args           = {
+        File inputFileBar = new File(inputDirPath + "other/bar.html");
+        File inputFileBaz = new File(inputDirPath + "other/baz.html");
+        File inputFileFoobar = new File(inputDirPath + "other/other/Foobar.html");
+        File outputFileBar = new File(outputDirPath + "bar-test.html");
+        File outputFileBaz = new File(outputDirPath + "baz-test.html");
+        File outputFileFoobar = new File(outputDirPath + "other/Foobar-test.html");
+        String[] args = {
             "-r",
             "-o",
             outputDirPath,
@@ -444,13 +443,13 @@ public class DirTest
      */
     @Test
     public void testRecursiveSingleInputToWithSuffixAndFileMask() throws Throwable {
-        File inputFileBar       = new File(inputDirPath + "other/bar.html");
-        File inputFileBaz       = new File(inputDirPath + "other/baz.html");
-        File inputFileFoobar    = new File(inputDirPath + "other/other/Foobar.html");
-        File outputFileBar      = new File(inputDirPath + "other/bar-test.html");
-        File outputFileBaz      = new File(inputDirPath + "other/baz-test.html");
-        File outputFileFoobar   = new File(inputDirPath + "other/other/Foobar-test.html");
-        String[] args           = {
+        File inputFileBar = new File(inputDirPath + "other/bar.html");
+        File inputFileBaz = new File(inputDirPath + "other/baz.html");
+        File inputFileFoobar = new File(inputDirPath + "other/other/Foobar.html");
+        File outputFileBar = new File(inputDirPath + "other/bar-test.html");
+        File outputFileBaz = new File(inputDirPath + "other/baz-test.html");
+        File outputFileFoobar = new File(inputDirPath + "other/other/Foobar-test.html");
+        String[] args = {
             "-r",
             "-s",
             "-test",

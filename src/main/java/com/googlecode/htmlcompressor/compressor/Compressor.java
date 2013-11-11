@@ -21,11 +21,11 @@ package com.googlecode.htmlcompressor.compressor;
  * @author <a href="mailto:serg472@gmail.com">Sergiy Kovalchuk</a>
  */
 public interface Compressor {
-	/**
-	 * The main method that compresses the given source and returns a compressed result.
-	 *
-	 * @param source The source to compress.
-	 * @return Compressed result.
-	 */
-	public abstract String compress(String source);
+    /**
+     * The main method that compresses the given source and returns a compressed result.
+     *
+     * @param source The source to compress.
+     * @return Compressed result.
+     */
+    public abstract String compress(String source);
 }

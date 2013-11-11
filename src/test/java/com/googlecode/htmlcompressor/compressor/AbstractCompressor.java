@@ -24,7 +24,6 @@ public abstract class AbstractCompressor {
      */
     protected String resourceBasePath;
 
-
     /**
      * Return the content of the given file that are located in the resourceBasePath.
      */

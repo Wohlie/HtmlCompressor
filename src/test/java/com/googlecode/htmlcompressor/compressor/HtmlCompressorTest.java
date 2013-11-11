@@ -26,268 +26,266 @@ import java.util.regex.Pattern;
 import static org.junit.Assert.assertEquals;
 
 public class HtmlCompressorTest
-    extends AbstractCompressor
-{
+    extends AbstractCompressor {
 
-    public HtmlCompressorTest()
-    {
+    public HtmlCompressorTest() {
         this.setResourceBasePath("./src/test/resources/html/");
     }
 
-	@Test
-	public void testEnabled() throws Exception {
-		String source = readResource("testEnabled.html");
-		String result = readResource("testEnabledResult.html");
+    @Test
+    public void testEnabled() throws Exception {
+        String source = readResource("testEnabled.html");
+        String result = readResource("testEnabledResult.html");
 
-		HtmlCompressor compressor = new HtmlCompressor();
-		compressor.setEnabled(false);
-
-		assertEquals(result, compressor.compress(source));
-	}
-
-	@Test
-	public void testRemoveSpacesInsideTags() throws Exception {
-		String source = readResource("testRemoveSpacesInsideTags.html");
-		String result = readResource("testRemoveSpacesInsideTagsResult.html");
-
-		HtmlCompressor compressor = new HtmlCompressor();
-		compressor.setRemoveMultiSpaces(false);
-
-		assertEquals(result, compressor.compress(source));
-	}
-
-	@Test
-	public void testRemoveComments() throws Exception {
-		String source = readResource("testRemoveComments.html");
-		String result = readResource("testRemoveCommentsResult.html");
-
-		HtmlCompressor compressor = new HtmlCompressor();
-		compressor.setRemoveComments(true);
-		compressor.setRemoveIntertagSpaces(true);
+        HtmlCompressor compressor = new HtmlCompressor();
+        compressor.setEnabled(false);
+
+        assertEquals(result, compressor.compress(source));
+    }
+
+    @Test
+    public void testRemoveSpacesInsideTags() throws Exception {
+        String source = readResource("testRemoveSpacesInsideTags.html");
+        String result = readResource("testRemoveSpacesInsideTagsResult.html");
+
+        HtmlCompressor compressor = new HtmlCompressor();
+        compressor.setRemoveMultiSpaces(false);
+
+        assertEquals(result, compressor.compress(source));
+    }
+
+    @Test
+    public void testRemoveComments() throws Exception {
+        String source = readResource("testRemoveComments.html");
+        String result = readResource("testRemoveCommentsResult.html");
+
+        HtmlCompressor compressor = new HtmlCompressor();
+        compressor.setRemoveComments(true);
+        compressor.setRemoveIntertagSpaces(true);
 
-		assertEquals(result, compressor.compress(source));
-	}
+        assertEquals(result, compressor.compress(source));
+    }
 
-	@Test
-	public void testRemoveQuotes() throws Exception {
-		String source = readResource("testRemoveQuotes.html");
-		String result = readResource("testRemoveQuotesResult.html");
+    @Test
+    public void testRemoveQuotes() throws Exception {
+        String source = readResource("testRemoveQuotes.html");
+        String result = readResource("testRemoveQuotesResult.html");
 
-		HtmlCompressor compressor = new HtmlCompressor();
-		compressor.setRemoveQuotes(true);
+        HtmlCompressor compressor = new HtmlCompressor();
+        compressor.setRemoveQuotes(true);
 
-		assertEquals(result, compressor.compress(source));
-	}
+        assertEquals(result, compressor.compress(source));
+    }
 
-	@Test
-	public void testRemoveMultiSpaces() throws Exception {
-		String source = readResource("testRemoveMultiSpaces.html");
-		String result = readResource("testRemoveMultiSpacesResult.html");
+    @Test
+    public void testRemoveMultiSpaces() throws Exception {
+        String source = readResource("testRemoveMultiSpaces.html");
+        String result = readResource("testRemoveMultiSpacesResult.html");
 
-		HtmlCompressor compressor = new HtmlCompressor();
-		compressor.setRemoveMultiSpaces(true);
+        HtmlCompressor compressor = new HtmlCompressor();
+        compressor.setRemoveMultiSpaces(true);
 
-		assertEquals(result, compressor.compress(source));
-	}
+        assertEquals(result, compressor.compress(source));
+    }
 
-	@Test
-	public void testRemoveIntertagSpaces() throws Exception {
-		String source = readResource("testRemoveIntertagSpaces.html");
-		String result = readResource("testRemoveIntertagSpacesResult.html");
+    @Test
+    public void testRemoveIntertagSpaces() throws Exception {
+        String source = readResource("testRemoveIntertagSpaces.html");
+        String result = readResource("testRemoveIntertagSpacesResult.html");
 
-		HtmlCompressor compressor = new HtmlCompressor();
-		compressor.setRemoveIntertagSpaces(true);
+        HtmlCompressor compressor = new HtmlCompressor();
+        compressor.setRemoveIntertagSpaces(true);
 
-		assertEquals(result, compressor.compress(source));
-	}
+        assertEquals(result, compressor.compress(source));
+    }
 
-	@Test
-	public void testPreservePatterns() throws Exception {
-		String source = readResource("testPreservePatterns.html");
-		String result = readResource("testPreservePatternsResult.html");
+    @Test
+    public void testPreservePatterns() throws Exception {
+        String source = readResource("testPreservePatterns.html");
+        String result = readResource("testPreservePatternsResult.html");
 
-		List<Pattern> preservePatterns = new ArrayList<Pattern>();
-		preservePatterns.add(HtmlCompressor.PHP_TAG_PATTERN); //<?php ... ?> blocks
-		preservePatterns.add(HtmlCompressor.SERVER_SCRIPT_TAG_PATTERN); //<% ... %> blocks
-		preservePatterns.add(HtmlCompressor.SERVER_SIDE_INCLUDE_PATTERN); //<!--# ... --> blocks
-		preservePatterns.add(Pattern.compile("<jsp:.*?>", Pattern.DOTALL | Pattern.CASE_INSENSITIVE)); //<jsp: ... > tags
+        List<Pattern> preservePatterns = new ArrayList<Pattern>();
+        preservePatterns.add(HtmlCompressor.PHP_TAG_PATTERN); //<?php ... ?> blocks
+        preservePatterns.add(HtmlCompressor.SERVER_SCRIPT_TAG_PATTERN); //<% ... %> blocks
+        preservePatterns.add(HtmlCompressor.SERVER_SIDE_INCLUDE_PATTERN); //<!--# ... --> blocks
+        preservePatterns.add(Pattern.compile("<jsp:.*?>", Pattern.DOTALL | Pattern.CASE_INSENSITIVE)); //<jsp: ... > tags
 
-		HtmlCompressor compressor = new HtmlCompressor();
-		compressor.setPreservePatterns(preservePatterns);
-		compressor.setRemoveComments(true);
-		compressor.setRemoveIntertagSpaces(true);
+        HtmlCompressor compressor = new HtmlCompressor();
+        compressor.setPreservePatterns(preservePatterns);
+        compressor.setRemoveComments(true);
+        compressor.setRemoveIntertagSpaces(true);
 
-		assertEquals(result, compressor.compress(source));
-	}
+        assertEquals(result, compressor.compress(source));
+    }
 
-	@Test
-	public void testCompressJavaScriptYui() throws Exception {
-		String source = readResource("testCompressJavaScript.html");
-		String result = readResource("testCompressJavaScriptYuiResult.html");
+    @Test
+    public void testCompressJavaScriptYui() throws Exception {
+        String source = readResource("testCompressJavaScript.html");
+        String result = readResource("testCompressJavaScriptYuiResult.html");
 
-		HtmlCompressor compressor = new HtmlCompressor();
-		compressor.setCompressJavaScript(true);
-		compressor.setRemoveIntertagSpaces(true);
+        HtmlCompressor compressor = new HtmlCompressor();
+        compressor.setCompressJavaScript(true);
+        compressor.setRemoveIntertagSpaces(true);
 
-		assertEquals(result, compressor.compress(source));
-	}
+        assertEquals(result, compressor.compress(source));
+    }
 
-	@Test
-	public void testCompressJavaScriptClosure() throws Exception {
-		String source = readResource("testCompressJavaScript.html");
-		String result = readResource("testCompressJavaScriptClosureResult.html");
+    @Test
+    public void testCompressJavaScriptClosure() throws Exception {
+        String source = readResource("testCompressJavaScript.html");
+        String result = readResource("testCompressJavaScriptClosureResult.html");
 
-		HtmlCompressor compressor = new HtmlCompressor();
-		compressor.setCompressJavaScript(true);
-		compressor.setJavaScriptCompressor(new ClosureJavaScriptCompressor(CompilationLevel.ADVANCED_OPTIMIZATIONS));
-		compressor.setRemoveIntertagSpaces(true);
+        HtmlCompressor compressor = new HtmlCompressor();
+        compressor.setCompressJavaScript(true);
+        compressor.setJavaScriptCompressor(new ClosureJavaScriptCompressor(CompilationLevel.ADVANCED_OPTIMIZATIONS));
+        compressor.setRemoveIntertagSpaces(true);
 
-		assertEquals(result, compressor.compress(source));
-	}
+        assertEquals(result, compressor.compress(source));
+    }
 
-	@Test
-	public void testCompressCss() throws Exception {
-		String source = readResource("testCompressCss.html");
-		String result = readResource("testCompressCssResult.html");
+    @Test
+    public void testCompressCss() throws Exception {
+        String source = readResource("testCompressCss.html");
+        String result = readResource("testCompressCssResult.html");
 
-		HtmlCompressor compressor = new HtmlCompressor();
-		compressor.setCompressCss(true);
-		compressor.setRemoveIntertagSpaces(true);
+        HtmlCompressor compressor = new HtmlCompressor();
+        compressor.setCompressCss(true);
+        compressor.setRemoveIntertagSpaces(true);
 
-		assertEquals(result, compressor.compress(source));
-	}
+        assertEquals(result, compressor.compress(source));
+    }
 
-	@Test
-	public void testCompress() throws Exception {
-		String source = readResource("testCompress.html");
-		String result = readResource("testCompressResult.html");
+    @Test
+    public void testCompress() throws Exception {
+        String source = readResource("testCompress.html");
+        String result = readResource("testCompressResult.html");
 
-		HtmlCompressor compressor = new HtmlCompressor();
+        HtmlCompressor compressor = new HtmlCompressor();
 
-		assertEquals(result, compressor.compress(source));
-	}
+        assertEquals(result, compressor.compress(source));
+    }
 
-	@Test
-	public void testSimpleDoctype() throws Exception {
-		String source = readResource("testSimpleDoctype.html");
-		String result = readResource("testSimpleDoctypeResult.html");
+    @Test
+    public void testSimpleDoctype() throws Exception {
+        String source = readResource("testSimpleDoctype.html");
+        String result = readResource("testSimpleDoctypeResult.html");
 
-		HtmlCompressor compressor = new HtmlCompressor();
-		compressor.setSimpleDoctype(true);
+        HtmlCompressor compressor = new HtmlCompressor();
+        compressor.setSimpleDoctype(true);
 
-		assertEquals(result, compressor.compress(source));
-	}
+        assertEquals(result, compressor.compress(source));
+    }
 
-	@Test
-	public void testRemoveScriptAttributes() throws Exception {
-		String source = readResource("testRemoveScriptAttributes.html");
-		String result = readResource("testRemoveScriptAttributesResult.html");
+    @Test
+    public void testRemoveScriptAttributes() throws Exception {
+        String source = readResource("testRemoveScriptAttributes.html");
+        String result = readResource("testRemoveScriptAttributesResult.html");
 
-		HtmlCompressor compressor = new HtmlCompressor();
-		compressor.setRemoveScriptAttributes(true);
+        HtmlCompressor compressor = new HtmlCompressor();
+        compressor.setRemoveScriptAttributes(true);
 
-		assertEquals(result, compressor.compress(source));
-	}
+        assertEquals(result, compressor.compress(source));
+    }
 
-	@Test
-	public void testRemoveStyleAttributes() throws Exception {
-		String source = readResource("testRemoveStyleAttributes.html");
-		String result = readResource("testRemoveStyleAttributesResult.html");
+    @Test
+    public void testRemoveStyleAttributes() throws Exception {
+        String source = readResource("testRemoveStyleAttributes.html");
+        String result = readResource("testRemoveStyleAttributesResult.html");
 
-		HtmlCompressor compressor = new HtmlCompressor();
-		compressor.setRemoveStyleAttributes(true);
+        HtmlCompressor compressor = new HtmlCompressor();
+        compressor.setRemoveStyleAttributes(true);
 
-		assertEquals(result, compressor.compress(source));
-	}
+        assertEquals(result, compressor.compress(source));
+    }
 
-	@Test
-	public void testRemoveLinkAttributes() throws Exception {
-		String source = readResource("testRemoveLinkAttributes.html");
-		String result = readResource("testRemoveLinkAttributesResult.html");
+    @Test
+    public void testRemoveLinkAttributes() throws Exception {
+        String source = readResource("testRemoveLinkAttributes.html");
+        String result = readResource("testRemoveLinkAttributesResult.html");
 
-		HtmlCompressor compressor = new HtmlCompressor();
-		compressor.setRemoveLinkAttributes(true);
+        HtmlCompressor compressor = new HtmlCompressor();
+        compressor.setRemoveLinkAttributes(true);
 
-		assertEquals(result, compressor.compress(source));
-	}
+        assertEquals(result, compressor.compress(source));
+    }
 
-	@Test
-	public void testRemoveFormAttributes() throws Exception {
-		String source = readResource("testRemoveFormAttributes.html");
-		String result = readResource("testRemoveFormAttributesResult.html");
+    @Test
+    public void testRemoveFormAttributes() throws Exception {
+        String source = readResource("testRemoveFormAttributes.html");
+        String result = readResource("testRemoveFormAttributesResult.html");
 
-		HtmlCompressor compressor = new HtmlCompressor();
-		compressor.setRemoveFormAttributes(true);
+        HtmlCompressor compressor = new HtmlCompressor();
+        compressor.setRemoveFormAttributes(true);
 
-		assertEquals(result, compressor.compress(source));
-	}
+        assertEquals(result, compressor.compress(source));
+    }
 
-	@Test
-	public void testRemoveInputAttributes() throws Exception {
-		String source = readResource("testRemoveInputAttributes.html");
-		String result = readResource("testRemoveInputAttributesResult.html");
+    @Test
+    public void testRemoveInputAttributes() throws Exception {
+        String source = readResource("testRemoveInputAttributes.html");
+        String result = readResource("testRemoveInputAttributesResult.html");
 
-		HtmlCompressor compressor = new HtmlCompressor();
-		compressor.setRemoveInputAttributes(true);
+        HtmlCompressor compressor = new HtmlCompressor();
+        compressor.setRemoveInputAttributes(true);
 
-		assertEquals(result, compressor.compress(source));
-	}
+        assertEquals(result, compressor.compress(source));
+    }
 
-	@Test
-	public void testRemoveJavaScriptProtocol() throws Exception {
-		String source = readResource("testRemoveJavaScriptProtocol.html");
-		String result = readResource("testRemoveJavaScriptProtocolResult.html");
+    @Test
+    public void testRemoveJavaScriptProtocol() throws Exception {
+        String source = readResource("testRemoveJavaScriptProtocol.html");
+        String result = readResource("testRemoveJavaScriptProtocolResult.html");
 
-		HtmlCompressor compressor = new HtmlCompressor();
-		compressor.setRemoveJavaScriptProtocol(true);
+        HtmlCompressor compressor = new HtmlCompressor();
+        compressor.setRemoveJavaScriptProtocol(true);
 
-		assertEquals(result, compressor.compress(source));
-	}
+        assertEquals(result, compressor.compress(source));
+    }
 
-	@Test
-	public void testRemoveHttpProtocol() throws Exception {
-		String source = readResource("testRemoveHttpProtocol.html");
-		String result = readResource("testRemoveHttpProtocolResult.html");
+    @Test
+    public void testRemoveHttpProtocol() throws Exception {
+        String source = readResource("testRemoveHttpProtocol.html");
+        String result = readResource("testRemoveHttpProtocolResult.html");
 
-		HtmlCompressor compressor = new HtmlCompressor();
-		compressor.setRemoveHttpProtocol(true);
+        HtmlCompressor compressor = new HtmlCompressor();
+        compressor.setRemoveHttpProtocol(true);
 
-		assertEquals(result, compressor.compress(source));
-	}
+        assertEquals(result, compressor.compress(source));
+    }
 
-	@Test
-	public void testRemoveHttpsProtocol() throws Exception {
-		String source = readResource("testRemoveHttpsProtocol.html");
-		String result = readResource("testRemoveHttpsProtocolResult.html");
+    @Test
+    public void testRemoveHttpsProtocol() throws Exception {
+        String source = readResource("testRemoveHttpsProtocol.html");
+        String result = readResource("testRemoveHttpsProtocolResult.html");
 
-		HtmlCompressor compressor = new HtmlCompressor();
-		compressor.setRemoveHttpsProtocol(true);
+        HtmlCompressor compressor = new HtmlCompressor();
+        compressor.setRemoveHttpsProtocol(true);
 
-		assertEquals(result, compressor.compress(source));
-	}
+        assertEquals(result, compressor.compress(source));
+    }
 
-	@Test
-	public void testPreserveLineBreaks() throws Exception {
-		String source = readResource("testPreserveLineBreaks.html");
-		String result = readResource("testPreserveLineBreaksResult.html");
+    @Test
+    public void testPreserveLineBreaks() throws Exception {
+        String source = readResource("testPreserveLineBreaks.html");
+        String result = readResource("testPreserveLineBreaksResult.html");
 
-		HtmlCompressor compressor = new HtmlCompressor();
-		compressor.setPreserveLineBreaks(true);
+        HtmlCompressor compressor = new HtmlCompressor();
+        compressor.setPreserveLineBreaks(true);
 
-		assertEquals(result, compressor.compress(source));
-	}
+        assertEquals(result, compressor.compress(source));
+    }
 
-	@Test
-	public void testSurroundingSpaces() throws Exception {
-		String source = readResource("testSurroundingSpaces.html");
-		String result = readResource("testSurroundingSpacesResult.html");
+    @Test
+    public void testSurroundingSpaces() throws Exception {
+        String source = readResource("testSurroundingSpaces.html");
+        String result = readResource("testSurroundingSpacesResult.html");
 
-		HtmlCompressor compressor = new HtmlCompressor();
-		compressor.setRemoveIntertagSpaces(true);
-		compressor.setRemoveSurroundingSpaces("p,br");
+        HtmlCompressor compressor = new HtmlCompressor();
+        compressor.setRemoveIntertagSpaces(true);
+        compressor.setRemoveSurroundingSpaces("p,br");
 
-		assertEquals(result, compressor.compress(source));
-	}
+        assertEquals(result, compressor.compress(source));
+    }
 
     @Test
     public void testCdataVariants() throws Exception {

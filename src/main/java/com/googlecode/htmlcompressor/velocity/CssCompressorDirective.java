@@ -15,10 +15,8 @@
  */
 package com.googlecode.htmlcompressor.velocity;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
-
+import com.googlecode.htmlcompressor.compressor.HtmlCompressor;
+import com.googlecode.htmlcompressor.compressor.YuiCssCompressor;
 import org.apache.velocity.context.InternalContextAdapter;
 import org.apache.velocity.exception.MethodInvocationException;
 import org.apache.velocity.exception.ParseErrorException;
@@ -29,74 +27,71 @@ import org.apache.velocity.runtime.directive.Directive;
 import org.apache.velocity.runtime.log.Log;
 import org.apache.velocity.runtime.parser.node.Node;
 
-import com.googlecode.htmlcompressor.compressor.HtmlCompressor;
-import com.googlecode.htmlcompressor.compressor.YuiCssCompressor;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
 
 /**
  * Velocity directive that compresses an CSS content within #compressCss ... #end block.
  * All CSS-related properties from {@link HtmlCompressor} are supported.
  *
+ * @author <a href="mailto:serg472@gmail.com">Sergiy Kovalchuk</a>
  * @see HtmlCompressor
  * @see <a href="http://developer.yahoo.com/yui/compressor/">Yahoo YUI Compressor</a>
- *
- * @author <a href="mailto:serg472@gmail.com">Sergiy Kovalchuk</a>
  */
 public class CssCompressorDirective extends Directive {
 
-	private Log log;
+    private Log log;
 
-	private boolean enabled = true;
+    private boolean enabled = true;
 
-	//YUICompressor settings
-	private int yuiCssLineBreak = -1;
+    //YUICompressor settings
+    private int yuiCssLineBreak = -1;
 
-	public String getName() {
-		return "compressCss";
-	}
-
-	public int getType() {
-		return BLOCK;
-	}
-
-	@Override
-	public void init(RuntimeServices rs, InternalContextAdapter context, Node node) throws TemplateInitException {
-		super.init(rs, context, node);
-		log = rs.getLog();
-
-		//set compressor properties
-		enabled = rs.getBoolean("userdirective.compressCss.enabled", true);
-		yuiCssLineBreak = rs.getInt("userdirective.compressCss.yuiCssLineBreak", -1);
-	}
-
-    public boolean render(InternalContextAdapter context, Writer writer, Node node)
-    		throws IOException, ResourceNotFoundException, ParseErrorException, MethodInvocationException {
-
-    	//render content
-    	StringWriter content = new StringWriter();
-		node.jjtGetChild(0).render(context, content);
-
-		//compress
-		if(enabled) {
-			try {
-
-				YuiCssCompressor compressor = new YuiCssCompressor();
-				compressor.setLineBreak(yuiCssLineBreak);
-				String result = compressor.compress(content.toString());
-
-				writer.write(result);
-			} catch (Exception e) {
-				writer.write(content.toString());
-				String msg = "Failed to compress content: "+content.toString();
-	            log.error(msg, e);
-	            throw new RuntimeException(msg, e);
-
-			}
-		} else {
-			writer.write(content.toString());
-		}
-
-		return true;
-
+    public String getName() {
+        return "compressCss";
     }
 
+    public int getType() {
+        return BLOCK;
+    }
+
+    @Override
+    public void init(RuntimeServices rs, InternalContextAdapter context, Node node) throws TemplateInitException {
+        super.init(rs, context, node);
+        log = rs.getLog();
+
+        //set compressor properties
+        enabled = rs.getBoolean("userdirective.compressCss.enabled", true);
+        yuiCssLineBreak = rs.getInt("userdirective.compressCss.yuiCssLineBreak", -1);
+    }
+
+    public boolean render(InternalContextAdapter context, Writer writer, Node node)
+        throws IOException, ResourceNotFoundException, ParseErrorException, MethodInvocationException {
+
+        //render content
+        StringWriter content = new StringWriter();
+        node.jjtGetChild(0).render(context, content);
+
+        //compress
+        if (enabled) {
+            try {
+
+                YuiCssCompressor compressor = new YuiCssCompressor();
+                compressor.setLineBreak(yuiCssLineBreak);
+                String result = compressor.compress(content.toString());
+
+                writer.write(result);
+            } catch (Exception e) {
+                writer.write(content.toString());
+                String msg = "Failed to compress content: " + content.toString();
+                log.error(msg, e);
+                throw new RuntimeException(msg, e);
+            }
+        } else {
+            writer.write(content.toString());
+        }
+
+        return true;
+    }
 }

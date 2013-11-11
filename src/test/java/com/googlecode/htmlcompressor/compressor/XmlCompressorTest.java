@@ -20,54 +20,52 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 public class XmlCompressorTest
-    extends AbstractCompressor
-{
+    extends AbstractCompressor {
 
-    public XmlCompressorTest()
-    {
+    public XmlCompressorTest() {
         this.setResourceBasePath("./src/test/resources/xml/");
     }
 
-	@Test
-	public void testCompress() throws Exception {
-		String source = readResource("testCompress.xml");
-		String result = readResource("testCompressResult.xml");
+    @Test
+    public void testCompress() throws Exception {
+        String source = readResource("testCompress.xml");
+        String result = readResource("testCompressResult.xml");
 
-		XmlCompressor compressor = new XmlCompressor();
+        XmlCompressor compressor = new XmlCompressor();
 
-		assertEquals(result, compressor.compress(source));
-	}
+        assertEquals(result, compressor.compress(source));
+    }
 
-	@Test
-	public void testEnabled() throws Exception {
-		String source = readResource("testEnabled.xml");
-		String result = readResource("testEnabledResult.xml");
+    @Test
+    public void testEnabled() throws Exception {
+        String source = readResource("testEnabled.xml");
+        String result = readResource("testEnabledResult.xml");
 
-		XmlCompressor compressor = new XmlCompressor();
-		compressor.setEnabled(false);
+        XmlCompressor compressor = new XmlCompressor();
+        compressor.setEnabled(false);
 
-		assertEquals(result, compressor.compress(source));
-	}
+        assertEquals(result, compressor.compress(source));
+    }
 
-	@Test
-	public void testRemoveComments() throws Exception {
-		String source = readResource("testRemoveComments.xml");
-		String result = readResource("testRemoveCommentsResult.xml");
+    @Test
+    public void testRemoveComments() throws Exception {
+        String source = readResource("testRemoveComments.xml");
+        String result = readResource("testRemoveCommentsResult.xml");
 
-		XmlCompressor compressor = new XmlCompressor();
-		compressor.setRemoveComments(true);
+        XmlCompressor compressor = new XmlCompressor();
+        compressor.setRemoveComments(true);
 
-		assertEquals(result, compressor.compress(source));
-	}
+        assertEquals(result, compressor.compress(source));
+    }
 
-	@Test
-	public void testRemoveIntertagSpaces() throws Exception {
-		String source = readResource("testRemoveIntertagSpaces.xml");
-		String result = readResource("testRemoveIntertagSpacesResult.xml");
+    @Test
+    public void testRemoveIntertagSpaces() throws Exception {
+        String source = readResource("testRemoveIntertagSpaces.xml");
+        String result = readResource("testRemoveIntertagSpacesResult.xml");
 
-		XmlCompressor compressor = new XmlCompressor();
-		compressor.setRemoveIntertagSpaces(true);
+        XmlCompressor compressor = new XmlCompressor();
+        compressor.setRemoveIntertagSpaces(true);
 
-		assertEquals(result, compressor.compress(source));
-	}
+        assertEquals(result, compressor.compress(source));
+    }
 }

@@ -22,8 +22,7 @@ import java.io.File;
 import java.util.Map;
 
 public class FileTest
-    extends AbstractCmd
-{
+    extends AbstractCmd {
 
     /**
      * Test a single file as input and the standard output as output.
@@ -32,8 +31,8 @@ public class FileTest
      */
     @Test
     public void testSingleInputStdOutput() throws Throwable {
-        File inputFile      = new File(inputDirPath + "foo.html");
-        String[] args       = {
+        File inputFile = new File(inputDirPath + "foo.html");
+        String[] args = {
             inputFile.getPath(),
         };
 
@@ -50,9 +49,9 @@ public class FileTest
      */
     @Test
     public void testSingleInputToFile() throws Throwable {
-        File inputFile      = new File(inputDirPath + "foo.html");
-        File outputFile     = new File(outputDirPath + "temp.html");
-        String[] args       = {
+        File inputFile = new File(inputDirPath + "foo.html");
+        File outputFile = new File(outputDirPath + "temp.html");
+        String[] args = {
             "-o",
             outputFile.getPath(),
             inputFile.getPath(),
@@ -71,10 +70,10 @@ public class FileTest
      */
     @Test
     public void testSingleInputToFileWithSuffix() throws Throwable {
-        File inputFile      = new File(inputDirPath + "foo.html");
-        File outputFile     = new File(outputDirPath + "temp.html");
+        File inputFile = new File(inputDirPath + "foo.html");
+        File outputFile = new File(outputDirPath + "temp.html");
         File realOutputFile = new File(outputDirPath + "temp-min.html");
-        String[] args       = {
+        String[] args = {
             "-o",
             outputFile.getPath(),
             "-s",
@@ -95,9 +94,9 @@ public class FileTest
      */
     @Test
     public void testSingleInputToDirectory() throws Throwable {
-        File inputFile      = new File(inputDirPath + "foo.html");
-        File outputFile     = new File(outputDirPath + "foo.html");
-        String[] args       = {
+        File inputFile = new File(inputDirPath + "foo.html");
+        File outputFile = new File(outputDirPath + "foo.html");
+        String[] args = {
             "-o",
             outputDirPath,
             inputFile.getPath(),
@@ -116,9 +115,9 @@ public class FileTest
      */
     @Test
     public void testSingleInputToDirectoryWithSuffix() throws Throwable {
-        File inputFile      = new File(inputDirPath + "foo.html");
-        File outputFile     = new File(outputDirPath + "foo-min.html");
-        String[] args       = {
+        File inputFile = new File(inputDirPath + "foo.html");
+        File outputFile = new File(outputDirPath + "foo-min.html");
+        String[] args = {
             "-o",
             outputDirPath,
             "-s",
@@ -139,7 +138,7 @@ public class FileTest
      */
     @Test
     public void testSingleNotExistingInputToStandardOutput() throws Throwable {
-        String[] args       = {
+        String[] args = {
             inputDirPath + "not-existing-file.html",
         };
 
@@ -164,7 +163,7 @@ public class FileTest
      */
     @Test
     public void testMultipleInputStdOutput() throws Throwable {
-        String[] args       = {
+        String[] args = {
             inputDirPath + "foo.html",
             inputDirPath + "bar.html",
         };
@@ -189,7 +188,7 @@ public class FileTest
      */
     @Test
     public void testMultipleInputToFile() throws Throwable {
-        String[] args       = {
+        String[] args = {
             "-o",
             outputDirPath + "temp.html",
             inputDirPath + "foo.html",
@@ -216,11 +215,11 @@ public class FileTest
      */
     @Test
     public void testMultipleInputToDirectory() throws Throwable {
-        File inputFileFoo   = new File(inputDirPath + "foo.html");
-        File inputFileBar   = new File(inputDirPath + "bar.html");
-        File outputFileFoo  = new File(outputDirPath + "foo.html");
-        File outputFileBar  = new File(outputDirPath + "bar.html");
-        String[] args       = {
+        File inputFileFoo = new File(inputDirPath + "foo.html");
+        File inputFileBar = new File(inputDirPath + "bar.html");
+        File outputFileFoo = new File(outputDirPath + "foo.html");
+        File outputFileBar = new File(outputDirPath + "bar.html");
+        String[] args = {
             "-o",
             outputDirPath,
             inputFileFoo.getPath(),
@@ -242,11 +241,11 @@ public class FileTest
      */
     @Test
     public void testMultipleInputToDirectoryWithSuffix() throws Throwable {
-        File inputFileFoo   = new File(inputDirPath + "foo.html");
-        File inputFileBar   = new File(inputDirPath + "bar.html");
-        File outputFileFoo  = new File(outputDirPath + "foo-min.html");
-        File outputFileBar  = new File(outputDirPath + "bar-min.html");
-        String[] args       = {
+        File inputFileFoo = new File(inputDirPath + "foo.html");
+        File inputFileBar = new File(inputDirPath + "bar.html");
+        File outputFileFoo = new File(outputDirPath + "foo-min.html");
+        File outputFileBar = new File(outputDirPath + "bar-min.html");
+        String[] args = {
             "-o",
             outputDirPath,
             "-s",
@@ -270,10 +269,10 @@ public class FileTest
      */
     @Test
     public void testMultipleInputToDirectoryWithTheSameFileName() throws Throwable {
-        File inputFileBar1   = new File(inputDirPath + "bar.html");
-        File inputFileBar2   = new File(inputDirPath + "other/bar.html");
-        File outputFileBar   = new File(outputDirPath + "bar.html");
-        String[] args       = {
+        File inputFileBar1 = new File(inputDirPath + "bar.html");
+        File inputFileBar2 = new File(inputDirPath + "other/bar.html");
+        File outputFileBar = new File(outputDirPath + "bar.html");
+        String[] args = {
             "-o",
             outputDirPath,
             inputFileBar1.getPath(),

@@ -15,74 +15,71 @@
  */
 package com.googlecode.htmlcompressor.taglib;
 
-import java.io.IOException;
+import com.googlecode.htmlcompressor.compressor.XmlCompressor;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyContent;
 import javax.servlet.jsp.tagext.BodyTagSupport;
-
-import com.googlecode.htmlcompressor.compressor.XmlCompressor;
+import java.io.IOException;
 
 /**
  * JSP tag that compresses an XML content within &lt;compress:xml>.
  * Compression parameters are set by default.
  *
- * @see XmlCompressor
- *
  * @author <a href="mailto:serg472@gmail.com">Sergiy Kovalchuk</a>
+ * @see XmlCompressor
  */
 @SuppressWarnings("serial")
 public class XmlCompressorTag extends BodyTagSupport {
 
-	private boolean enabled = true;
+    private boolean enabled = true;
 
-	//default settings
-	private boolean removeComments = true;
-	private boolean removeIntertagSpaces = true;
+    //default settings
+    private boolean removeComments = true;
+    private boolean removeIntertagSpaces = true;
 
-	@Override
-	public int doEndTag() throws JspException {
+    @Override
+    public int doEndTag() throws JspException {
 
-		BodyContent bodyContent = getBodyContent();
-		String content = bodyContent.getString();
+        BodyContent bodyContent = getBodyContent();
+        String content = bodyContent.getString();
 
-		XmlCompressor compressor = new XmlCompressor();
-		compressor.setEnabled(enabled);
-		compressor.setRemoveComments(removeComments);
-		compressor.setRemoveIntertagSpaces(removeIntertagSpaces);
+        XmlCompressor compressor = new XmlCompressor();
+        compressor.setEnabled(enabled);
+        compressor.setRemoveComments(removeComments);
+        compressor.setRemoveIntertagSpaces(removeIntertagSpaces);
 
-		try {
-			bodyContent.clear();
-			bodyContent.append(compressor.compress(content));
-			bodyContent.writeOut(pageContext.getOut());
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+        try {
+            bodyContent.clear();
+            bodyContent.append(compressor.compress(content));
+            bodyContent.writeOut(pageContext.getOut());
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-		return super.doEndTag();
-	}
+        return super.doEndTag();
+    }
 
-	/**
-	 * @see XmlCompressor#setEnabled(boolean)
-	 */
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
-	}
+    /**
+     * @see XmlCompressor#setEnabled(boolean)
+     */
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
 
-	/**
-	 * @see XmlCompressor#setRemoveComments(boolean)
-	 */
-	public void setRemoveComments(boolean removeComments) {
-		this.removeComments = removeComments;
-	}
+    /**
+     * @see XmlCompressor#setRemoveComments(boolean)
+     */
+    public void setRemoveComments(boolean removeComments) {
+        this.removeComments = removeComments;
+    }
 
-	/**
-	 * @see XmlCompressor#setRemoveIntertagSpaces(boolean)
-	 */
-	public void setRemoveIntertagSpaces(boolean removeIntertagSpaces) {
-		this.removeIntertagSpaces = removeIntertagSpaces;
-	}
-
+    /**
+     * @see XmlCompressor#setRemoveIntertagSpaces(boolean)
+     */
+    public void setRemoveIntertagSpaces(boolean removeIntertagSpaces) {
+        this.removeIntertagSpaces = removeIntertagSpaces;
+    }
 }

@@ -23,86 +23,85 @@ package com.googlecode.htmlcompressor.compressor;
  */
 public class HtmlCompressorStatistics {
 
-	private HtmlMetrics originalMetrics = new HtmlMetrics();
-	private HtmlMetrics compressedMetrics = new HtmlMetrics();
-	private long time = 0;
-	private int preservedSize = 0;
+    private HtmlMetrics originalMetrics = new HtmlMetrics();
+    private HtmlMetrics compressedMetrics = new HtmlMetrics();
+    private long time = 0;
+    private int preservedSize = 0;
 
-	/**
-	 * Returns metrics of an uncompressed document
-	 *
-	 * @return metrics of an uncompressed document
-	 * @see HtmlMetrics
-	 */
-	public HtmlMetrics getOriginalMetrics() {
-		return originalMetrics;
-	}
+    /**
+     * Returns metrics of an uncompressed document
+     *
+     * @return metrics of an uncompressed document
+     * @see HtmlMetrics
+     */
+    public HtmlMetrics getOriginalMetrics() {
+        return originalMetrics;
+    }
 
-	/**
-	 * @param originalMetrics the originalMetrics to set
-	 */
-	public void setOriginalMetrics(HtmlMetrics originalMetrics) {
-		this.originalMetrics = originalMetrics;
-	}
+    /**
+     * @param originalMetrics the originalMetrics to set
+     */
+    public void setOriginalMetrics(HtmlMetrics originalMetrics) {
+        this.originalMetrics = originalMetrics;
+    }
 
-	/**
-	 * Returns metrics of a compressed document
-	 *
-	 * @return metrics of a compressed document
-	 * @see HtmlMetrics
-	 */
-	public HtmlMetrics getCompressedMetrics() {
-		return compressedMetrics;
-	}
+    /**
+     * Returns metrics of a compressed document
+     *
+     * @return metrics of a compressed document
+     * @see HtmlMetrics
+     */
+    public HtmlMetrics getCompressedMetrics() {
+        return compressedMetrics;
+    }
 
-	/**
-	 * @param compressedMetrics the compressedMetrics to set
-	 */
-	public void setCompressedMetrics(HtmlMetrics compressedMetrics) {
-		this.compressedMetrics = compressedMetrics;
-	}
+    /**
+     * @param compressedMetrics the compressedMetrics to set
+     */
+    public void setCompressedMetrics(HtmlMetrics compressedMetrics) {
+        this.compressedMetrics = compressedMetrics;
+    }
 
-	/**
-	 * Returns total compression time.
-	 *
-	 * <p>Please note that compression performance varies very significantly depending on whether it was
-	 * a cold run or not (specifics of Java VM), so for accurate real world results it is recommended
-	 * to take measurements accordingly.
-	 *
-	 * @return the compression time, in milliseconds
-	 *
-	 */
-	public long getTime() {
-		return time;
-	}
+    /**
+     * Returns total compression time.
+     * <p/>
+     * <p>Please note that compression performance varies very significantly depending on whether it was
+     * a cold run or not (specifics of Java VM), so for accurate real world results it is recommended
+     * to take measurements accordingly.
+     *
+     * @return the compression time, in milliseconds
+     */
+    public long getTime() {
+        return time;
+    }
 
-	/**
-	 * @param time the time to set
-	 */
-	public void setTime(long time) {
-		this.time = time;
-	}
+    /**
+     * @param time the time to set
+     */
+    public void setTime(long time) {
+        this.time = time;
+    }
 
-	/**
-	 * Returns total size of blocks that were skipped by the compressor
-	 * (for example content inside <code>&lt;pre></code> tags or inside
-	 * <code>&lt;script></code> tags with disabled javascript compression)
-	 *
-	 * @return the total size of blocks that were skipped by the compressor, in bytes
-	 */
-	public int getPreservedSize() {
-		return preservedSize;
-	}
+    /**
+     * Returns total size of blocks that were skipped by the compressor
+     * (for example content inside <code>&lt;pre></code> tags or inside
+     * <code>&lt;script></code> tags with disabled javascript compression)
+     *
+     * @return the total size of blocks that were skipped by the compressor, in bytes
+     */
+    public int getPreservedSize() {
+        return preservedSize;
+    }
 
-	/**
-	 * @param preservedSize the preservedSize to set
-	 */
-	public void setPreservedSize(int preservedSize) {
-		this.preservedSize = preservedSize;
-	}
+    /**
+     * @param preservedSize the preservedSize to set
+     */
+    public void setPreservedSize(int preservedSize) {
+        this.preservedSize = preservedSize;
+    }
 
-	@Override
-	public String toString() {
-		return String.format("Time=%d, Preserved=%d, Original={%s}, Compressed={%s}", time, preservedSize, originalMetrics.toString(), compressedMetrics.toString());
-	}
+    @Override
+    public String toString() {
+        return String.format("Time=%d, Preserved=%d, Original={%s}, Compressed={%s}", time, preservedSize, originalMetrics.toString(), compressedMetrics.toString());
+    }
 }

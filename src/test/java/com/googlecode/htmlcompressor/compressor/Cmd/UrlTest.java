@@ -22,8 +22,7 @@ import java.io.File;
 import java.util.Map;
 
 public class UrlTest
-    extends AbstractCmd
-{
+    extends AbstractCmd {
     /**
      * Test a single file as input and the standard output as output.
      *
@@ -31,8 +30,8 @@ public class UrlTest
      */
     @Test
     public void testSingleInputStdOutput() throws Throwable {
-        String url      = "http://example.com";
-        String[] args   = {
+        String url = "http://example.com";
+        String[] args = {
             url,
         };
 
@@ -49,9 +48,9 @@ public class UrlTest
      */
     @Test
     public void testSingleInputToFile() throws Throwable {
-        String url      = "https://example.com";
+        String url = "https://example.com";
         File outputFile = new File(outputDirPath + "temp.html");
-        String[] args       = {
+        String[] args = {
             "-o",
             outputFile.getPath(),
             url,
@@ -70,10 +69,10 @@ public class UrlTest
      */
     @Test
     public void testSingleInputToFileWithSuffix() throws Throwable {
-        String url          = "http://example.org/";
-        File outputFile     = new File(outputDirPath + "temp.html");
+        String url = "http://example.org/";
+        File outputFile = new File(outputDirPath + "temp.html");
         File realOutputFile = new File(outputDirPath + "temp-min.html");
-        String[] args       = {
+        String[] args = {
             "-o",
             outputFile.getPath(),
             "-s",
@@ -94,8 +93,8 @@ public class UrlTest
      */
     @Test
     public void testSingleInputToDirectory() throws Throwable {
-        String url      = "http://example.org/";
-        String[] args   = {
+        String url = "http://example.org/";
+        String[] args = {
             "-o",
             outputDirPath,
             url,
@@ -119,7 +118,7 @@ public class UrlTest
      */
     @Test
     public void testMultipleInputStdOutput() throws Throwable {
-        String[] args       = {
+        String[] args = {
             "http://example.org/",
             "http://example.com/",
         };
@@ -144,7 +143,7 @@ public class UrlTest
      */
     @Test
     public void testMultipleInputToFile() throws Throwable {
-        String[] args       = {
+        String[] args = {
             "-o",
             outputDirPath + "temp.html",
             "http://example.org/",
@@ -171,7 +170,7 @@ public class UrlTest
      */
     @Test
     public void testMultipleInputToDirectory() throws Throwable {
-        String[] args       = {
+        String[] args = {
             "-o",
             outputDirPath,
             "http://example.org/",
