@@ -11,8 +11,8 @@
   <!-- Basic Information                                                      -->
   <!-- ====================================================================== -->
   <groupId>com.googlecode.htmlcompressor</groupId>
-  <artifactId>htmlcompressor</artifactId>
-  <version>1.5.3-SNAPSHOT</version>
+  <artifactId>yahc</artifactId>
+  <version>1.6.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <!-- ====================================================================== -->

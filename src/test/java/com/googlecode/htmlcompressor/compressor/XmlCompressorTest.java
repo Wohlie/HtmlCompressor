@@ -1,11 +1,11 @@
 /**
- * Copyright 2009-2013 the original author or authors.
+ * Copyright 2009 - 2012    Sergiy Kovalchuk the original author or other authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -32,9 +32,9 @@ public class XmlCompressorTest
 	public void testCompress() throws Exception {
 		String source = readResource("testCompress.xml");
 		String result = readResource("testCompressResult.xml");
-		
+
 		XmlCompressor compressor = new XmlCompressor();
-		
+
 		assertEquals(result, compressor.compress(source));
 	}
 
@@ -42,10 +42,10 @@ public class XmlCompressorTest
 	public void testEnabled() throws Exception {
 		String source = readResource("testEnabled.xml");
 		String result = readResource("testEnabledResult.xml");
-		
+
 		XmlCompressor compressor = new XmlCompressor();
 		compressor.setEnabled(false);
-		
+
 		assertEquals(result, compressor.compress(source));
 	}
 
@@ -53,10 +53,10 @@ public class XmlCompressorTest
 	public void testRemoveComments() throws Exception {
 		String source = readResource("testRemoveComments.xml");
 		String result = readResource("testRemoveCommentsResult.xml");
-		
+
 		XmlCompressor compressor = new XmlCompressor();
 		compressor.setRemoveComments(true);
-		
+
 		assertEquals(result, compressor.compress(source));
 	}
 
@@ -64,10 +64,10 @@ public class XmlCompressorTest
 	public void testRemoveIntertagSpaces() throws Exception {
 		String source = readResource("testRemoveIntertagSpaces.xml");
 		String result = readResource("testRemoveIntertagSpacesResult.xml");
-		
+
 		XmlCompressor compressor = new XmlCompressor();
 		compressor.setRemoveIntertagSpaces(true);
-		
+
 		assertEquals(result, compressor.compress(source));
 	}
 }

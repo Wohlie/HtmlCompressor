@@ -1,18 +1,19 @@
-package com.googlecode.htmlcompressor.compressor;
-
-/*
+/**
+ * Copyright 2009 - 2012    Sergiy Kovalchuk the original author or other authors.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.googlecode.htmlcompressor.compressor;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -21,22 +22,22 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Class that compresses given XML source by removing comments, extra spaces and 
+ * Class that compresses given XML source by removing comments, extra spaces and
  * line breaks while preserving content within CDATA blocks.
- * 
+ *
  * @author <a href="mailto:serg472@gmail.com">Sergiy Kovalchuk</a>
  */
 public class XmlCompressor implements Compressor {
-	
+
 	private boolean enabled = true;
-	
+
 	//default settings
 	private boolean removeComments = true;
 	private boolean removeIntertagSpaces = true;
-	
-	//temp replacements for preserved blocks 
+
+	//temp replacements for preserved blocks
 	protected static final String tempCdataBlock = "%%%COMPRESS~CDATA~{0,number,#}%%%";
-	
+
 	//compiled regex patterns
 	protected static final Pattern cdataPattern = Pattern.compile("<!\\[CDATA\\[.*?\\]\\]>", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
 	protected static final Pattern commentPattern = Pattern.compile("<!--.*?-->", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
@@ -44,12 +45,12 @@ public class XmlCompressor implements Compressor {
 	protected static final Pattern tagEndSpacePattern = Pattern.compile("(<(?:[^>]+?))(?:\\s+?)(/?>)", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
 	protected static final Pattern multispacePattern = Pattern.compile("\\s+(?=[^<]*?>)", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
 	protected static final Pattern tagPropertyPattern = Pattern.compile("(\\s\\w+)\\s*=\\s*(?=[^<]*?>)", Pattern.CASE_INSENSITIVE);
-	
+
 	protected static final Pattern tempCdataPattern = Pattern.compile("%%%COMPRESS~CDATA~(\\d+?)%%%", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
-	
+
 	/**
 	 * The main method that compresses given XML source and returns compressed result.
-	 * 
+	 *
 	 * @param xml XML content to compress
 	 * @return compressed content.
 	 */
@@ -58,19 +59,19 @@ public class XmlCompressor implements Compressor {
 		if(!enabled || xml == null || xml.length() == 0) {
 			return xml;
 		}
-		
+
 		//preserved block containers
 		List<String> cdataBlocks = new ArrayList<String>();
-		
+
 		//preserve blocks
 		xml = preserveBlocks(xml, cdataBlocks);
-		
+
 		//process pure xml
 		xml = processXml(xml);
-		
+
 		//return preserved blocks
 		xml = returnBlocks(xml, cdataBlocks);
-		
+
 		return xml.trim();
 	}
 
@@ -85,10 +86,10 @@ public class XmlCompressor implements Compressor {
 		}
 		matcher.appendTail(sb);
 		xml = sb.toString();
-		
+
 		return xml;
 	}
-	
+
 	protected String returnBlocks(String xml, List<String> cdataBlocks) {
 		//put CDATA blocks back
 		Matcher matcher = tempCdataPattern.matcher(xml);
@@ -98,30 +99,30 @@ public class XmlCompressor implements Compressor {
 		}
 		matcher.appendTail(sb);
 		xml = sb.toString();
-		
+
 		return xml;
 	}
-	
+
 	protected String processXml(String xml) {
 		//remove comments
 		xml = removeComments(xml);
-		
+
 		//remove inter-tag spaces
 		xml = removeIntertagSpaces(xml);
-		
+
 		//remove unneeded spaces inside tags
 		xml = removeSpacesInsideTags(xml);
-		
+
 		return xml;
 	}
 
 	protected String removeSpacesInsideTags(String xml) {
 		//replace miltiple spaces inside tags with single spaces
 		xml = multispacePattern.matcher(xml).replaceAll(" ");
-		
+
 		//remove spaces around equal sign inside tags
 		xml = tagPropertyPattern.matcher(xml).replaceAll("$1=");
-		
+
 		//remove ending spaces inside tags
 		xml = tagEndSpacePattern.matcher(xml).replaceAll("$1$2");
 		return xml;
@@ -142,10 +143,10 @@ public class XmlCompressor implements Compressor {
 		}
 		return xml;
 	}
-	
+
 	/**
-	 * Returns <code>true</code> if compression is enabled.  
-	 * 
+	 * Returns <code>true</code> if compression is enabled.
+	 *
 	 * @return <code>true</code> if compression is enabled.
 	 */
 	public boolean isEnabled() {
@@ -153,9 +154,9 @@ public class XmlCompressor implements Compressor {
 	}
 
 	/**
-	 * If set to <code>false</code> all compression will be bypassed. Might be useful for testing purposes. 
+	 * If set to <code>false</code> all compression will be bypassed. Might be useful for testing purposes.
 	 * Default is <code>true</code>.
-	 * 
+	 *
 	 * @param enabled set <code>false</code> to bypass all compression
 	 */
 	public void setEnabled(boolean enabled) {
@@ -164,7 +165,7 @@ public class XmlCompressor implements Compressor {
 
 	/**
 	 * Returns <code>true</code> if all XML comments will be removed.
-	 * 
+	 *
 	 * @return <code>true</code> if all XML comments will be removed
 	 */
 	public boolean isRemoveComments() {
@@ -172,9 +173,9 @@ public class XmlCompressor implements Compressor {
 	}
 
 	/**
-	 * If set to <code>true</code> all XML comments will be removed.   
+	 * If set to <code>true</code> all XML comments will be removed.
 	 * Default is <code>true</code>.
-	 * 
+	 *
 	 * @param removeComments set <code>true</code> to remove all XML comments
 	 */
 	public void setRemoveComments(boolean removeComments) {
@@ -183,7 +184,7 @@ public class XmlCompressor implements Compressor {
 
 	/**
 	 * Returns <code>true</code> if all inter-tag whitespace characters will be removed.
-	 * 
+	 *
 	 * @return <code>true</code> if all inter-tag whitespace characters will be removed.
 	 */
 	public boolean isRemoveIntertagSpaces() {
@@ -193,11 +194,11 @@ public class XmlCompressor implements Compressor {
 	/**
 	 * If set to <code>true</code> all inter-tag whitespace characters will be removed.
 	 * Default is <code>true</code>.
-	 * 
+	 *
 	 * @param removeIntertagSpaces set <code>true</code> to remove all inter-tag whitespace characters
 	 */
 	public void setRemoveIntertagSpaces(boolean removeIntertagSpaces) {
 		this.removeIntertagSpaces = removeIntertagSpaces;
 	}
-	
+
 }

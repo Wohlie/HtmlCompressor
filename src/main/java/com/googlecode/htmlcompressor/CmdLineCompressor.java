@@ -682,7 +682,7 @@ public class CmdLineCompressor {
 	}
 
 	private void printUsage() {
-		System.out.println("Usage: java -jar htmlcompressor.jar [options] [input]\n\n"
+		System.out.println("Usage: java -jar yahc.jar [options] [input]\n\n"
 
 				+ "[input]                        URL, filename, directory, or space separated list\n"
 				+ "                               of files and directories to compress.\n"
