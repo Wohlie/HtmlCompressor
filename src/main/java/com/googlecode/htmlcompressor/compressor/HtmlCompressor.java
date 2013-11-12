@@ -949,10 +949,6 @@ public class HtmlCompressor implements Compressor {
 
         if (compressJavaScript) {
             for (int i = 0; i < scriptBlocks.size(); i++) {
-                if (!compressJavaScriptWithPreservedBlocks && hasPreservedUserBlocks(scriptBlocks.get(i))) {
-                    continue;
-                }
-
                 scriptBlocks.set(i, compressJavaScript(scriptBlocks.get(i)));
             }
         } else if (generateStatistics) {
@@ -978,10 +974,6 @@ public class HtmlCompressor implements Compressor {
 
         if (compressCss) {
             for (int i = 0; i < styleBlocks.size(); i++) {
-                if (!compressCssWithPreservedBlocks && hasPreservedUserBlocks(styleBlocks.get(i))) {
-                    continue;
-                }
-
                 styleBlocks.set(i, compressCssStyles(styleBlocks.get(i)));
             }
         } else if (generateStatistics) {
@@ -1007,10 +999,6 @@ public class HtmlCompressor implements Compressor {
 
         if (compressCss) {
             for (int i = 0; i < styleAttrBlocks.size(); i++) {
-                if (!compressCssWithPreservedBlocks && hasPreservedUserBlocks(styleAttrBlocks.get(i))) {
-                    continue;
-                }
-
                 String source = "*{" + styleAttrBlocks.get(i) + "}";
                 String result = compressCssStyles(source);
 
@@ -1039,29 +1027,34 @@ public class HtmlCompressor implements Compressor {
 
     protected String compressJavaScript(String source) {
 
-        //set default javascript compressor
-        if (javaScriptCompressor == null) {
-            YuiJavaScriptCompressor yuiJsCompressor = new YuiJavaScriptCompressor();
-            yuiJsCompressor.setNoMunge(yuiJsNoMunge);
-            yuiJsCompressor.setPreserveAllSemiColons(yuiJsPreserveAllSemiColons);
-            yuiJsCompressor.setDisableOptimizations(yuiJsDisableOptimizations);
-            yuiJsCompressor.setLineBreak(yuiJsLineBreak);
-
-            if (yuiErrorReporter != null) {
-                yuiJsCompressor.setErrorReporter(yuiErrorReporter);
-            }
-
-            javaScriptCompressor = yuiJsCompressor;
-        }
-
         //Try to parse the content from a cdata block
         Map<String, String> cdataResult = splitCdata(source);
         if (null != cdataResult) {
             source = cdataResult.get("content");
         }
 
-        String result = javaScriptCompressor.compress(source);
+        //Optimize the source if possible
+        String result = source;
+        if (compressJavaScriptWithPreservedBlocks || !hasPreservedUserBlocks(source)) {
+            if (javaScriptCompressor == null) {
+                YuiJavaScriptCompressor yuiJsCompressor = new YuiJavaScriptCompressor();
+                yuiJsCompressor.setNoMunge(yuiJsNoMunge);
+                yuiJsCompressor.setPreserveAllSemiColons(yuiJsPreserveAllSemiColons);
+                yuiJsCompressor.setDisableOptimizations(yuiJsDisableOptimizations);
+                yuiJsCompressor.setLineBreak(yuiJsLineBreak);
 
+                if (yuiErrorReporter != null) {
+                    yuiJsCompressor.setErrorReporter(yuiErrorReporter);
+                }
+
+                javaScriptCompressor = yuiJsCompressor;
+            }
+
+            //Optimize the js
+            result = javaScriptCompressor.compress(source);
+        }
+
+        //Rebuild the cdata
         if (null != cdataResult) {
             result = cdataResult.get("startTag") + result + cdataResult.get("endTag");
         }
@@ -1071,22 +1064,26 @@ public class HtmlCompressor implements Compressor {
 
     protected String compressCssStyles(String source) {
 
-        //set default css compressor
-        if (cssCompressor == null) {
-            YuiCssCompressor yuiCssCompressor = new YuiCssCompressor();
-            yuiCssCompressor.setLineBreak(yuiCssLineBreak);
-
-            cssCompressor = yuiCssCompressor;
-        }
-
         //Try to parse the content from a cdata block
         Map<String, String> cdataResult = splitCdata(source);
         if (null != cdataResult) {
             source = cdataResult.get("content");
         }
 
-        String result = cssCompressor.compress(source);
+        String result = source;
+        if (compressCssWithPreservedBlocks || !hasPreservedUserBlocks(source)) {
+            if (cssCompressor == null) {
+                YuiCssCompressor yuiCssCompressor = new YuiCssCompressor();
+                yuiCssCompressor.setLineBreak(yuiCssLineBreak);
 
+                cssCompressor = yuiCssCompressor;
+            }
+
+            //Optimize the css content
+            result = cssCompressor.compress(source);
+        }
+
+        //Rebuild the cdata
         if (null != cdataResult) {
             result = cdataResult.get("startTag") + result + cdataResult.get("endTag");
         }
@@ -1094,7 +1091,7 @@ public class HtmlCompressor implements Compressor {
         return result;
     }
 
-    /**
+        /**
      * Try to parse cdata block from the given source.
      *
      * @param source
@@ -1125,9 +1122,9 @@ public class HtmlCompressor implements Compressor {
         if (null == cdataContent) {
             matcher = cdataPattern3.matcher(source);
             if (matcher.matches()) {
-                cdataStartTag = "/*<![CDATA[*/";
+                cdataStartTag = "//<![CDATA[\n";
                 cdataContent = matcher.group(1);
-                cdataEndTag = "/*]]>*/";
+                cdataEndTag = "//]]>";
             }
         }
 
