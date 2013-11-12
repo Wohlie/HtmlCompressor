@@ -11,48 +11,77 @@ automatically optimize JS and CSS parts in the given input.
 
 Here are few examples of YaHc results with default settings:
 <table>
-  <tr>
-    <th>Site</th>
-    <th>Plain Size / gziped Size</th>
-    <th>YaHc Size / gziped Size</th>
-    <th>Plain Ratio / gziped Ratio</th>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/" target="_blank">github.com</a></td>
-    <td><pre> 12,553b /  3,745b</pre></td>
-    <td><pre> 10,788b /  3,475b</pre></td>
-    <td><pre>14.06% /  7.21%</pre></td>
-  </tr>
-  <tr>
-    <td><a href="http://stackoverflow.com/" target="_blank">stackoverflow.com</a></td>
-    <td><pre>195,049b / 30,660b</pre></td>
-    <td><pre>166,124b / 29,546b</pre></td>
-    <td><pre>14.83% /  3.63%</pre></td>
-  </tr>
-  <tr>
-    <td><a href="http://magento.com/" target="_blank">magento.com</a></td>
-    <td><pre> 62,500b / 14,319b</pre></td>
-    <td><pre> 46,117b / 11,798b</pre></td>
-    <td><pre>26.21% / 17.61%</pre></td>
-  </tr>
-  <tr>
-    <td><a href="http://cnn.com/" target="_blank">cnn.com</a></td>
-    <td><pre>126,382b / 24,510b</pre></td>
-    <td><pre>123,170b / 23,902b</pre></td>
-    <td><pre> 2.54% /  2.48%</pre></td>
-  </tr>
-  <tr>
-    <td><a href="http://www.stern.de/" target="_blank">www.stern.de</a></td>
-    <td><pre>230,186b / 36,333b</pre></td>
-    <td><pre>190,388b / 34,019b</pre></td>
-    <td><pre>17.29% /  6.37%</pre></td>
-  </tr>
-  <tr>
-    <td><a href="http://www.spiegel.de/" target="_blank">www.spiegel.de</a></td>
-    <td><pre>204,923b / 38,119b</pre></td>
-    <td><pre>193,044b / 36,637b</pre></td>
-    <td><pre> 5.80% /  3.89%</pre></td>
-  </tr>
+    <tr>
+        <th rowspan="3">Site</th>
+        <th colspan="4">Size</th>
+        <th colspan="2" rowspan="2">Ratio</th>
+    </tr>
+    <tr>
+        <th colspan="2">Original</th>
+        <th colspan="2">YaHc</th>
+    </tr>
+    <tr>
+        <th>Plain</th>
+        <th>gzip</th>
+        <th>Plain</th>
+        <th>gzip</th>
+        <th>Plain</th>
+        <th>gzip</th>
+    </tr>
+    <tr>
+        <td><a href="https://github.com/" target="_blank">github</a></td>
+        <td><pre> 12,553b</pre></td>
+        <td><pre> 3,750b</pre></td>
+        <td><pre> 10,788b</pre></td>
+        <td><pre> 3,480b</pre></td>
+        <td><pre>14.06%</pre></td>
+        <td><pre> 7.20%</pre></td>
+    </tr>
+    <tr>
+        <td><a href="http://stackoverflow.com/" target="_blank">stackoverflow</a></td>
+        <td><pre>195,049b</pre></td>
+        <td><pre>30,665b</pre></td>
+        <td><pre>166,124b</pre></td>
+        <td><pre>29,551b</pre></td>
+        <td><pre>14.83%</pre></td>
+        <td><pre> 3.63%</pre></td>
+    </tr>
+    <tr>
+        <td><a href="http://magento.com/" target="_blank">magento</a></td>
+        <td><pre> 62,500b</pre></td>
+        <td><pre>14,324b</pre></td>
+        <td><pre> 46,117b</pre></td>
+        <td><pre>11,803b</pre></td>
+        <td><pre>26.21%</pre></td>
+        <td><pre>17.60%</pre></td>
+    </tr>
+    <tr>
+        <td><a href="http://cnn.com/" target="_blank">cnn</a></td>
+        <td><pre>126,382b</pre></td>
+        <td><pre>24,515b</pre></td>
+        <td><pre>123,170b</pre></td>
+        <td><pre>23,907b</pre></td>
+        <td><pre> 2.54%</pre></td>
+        <td><pre> 2.48%</pre></td>
+    </tr>
+    <tr>
+        <td><a href="http://www.stern.de/" target="_blank">stern</a></td>
+        <td><pre>230,186b</pre></td>
+        <td><pre>36,338b</pre></td>
+        <td><pre>190,388b</pre></td>
+        <td><pre>34,024b</pre></td>
+        <td><pre>17.29%</pre></td>
+        <td><pre> 6.37%</pre></td>
+    </tr>
+    <tr>
+        <td><a href="http://www.spiegel.de/" target="_blank">spiegel</a></td>
+        <td><pre>204,923b</pre></td>
+        <td><pre>38,124b</pre></td>
+        <td><pre>193,044b</pre></td>
+        <td><pre>36,642b</pre></td>
+        <td><pre> 5.80%</pre></td>
+        <td><pre> 3.89%</pre></td>
+    </tr>
 </table>
 
 ## Requirements
