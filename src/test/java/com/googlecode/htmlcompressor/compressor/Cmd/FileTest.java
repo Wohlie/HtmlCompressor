@@ -30,7 +30,7 @@ public class FileTest
      * @throws Throwable
      */
     @Test
-    public void testSingleInputStdOutput() throws Throwable {
+    public void testSingleInputToStdOutput() throws Throwable {
         File inputFile = new File(inputDirPath + "foo.html");
         String[] args = {
             inputFile.getPath(),
@@ -40,6 +40,27 @@ public class FileTest
         Assert.assertEquals(1, map.size());
         Assert.assertTrue(map.containsKey(inputFile.getAbsolutePath()));
         Assert.assertNull(map.get(inputFile.getAbsolutePath()));
+    }
+
+    /**
+     * Test a single file as input with an output suffix.
+     *
+     * @throws Throwable
+     */
+    @Test
+    public void testSingleInputWithSuffix() throws Throwable {
+        File inputFile = new File(inputDirPath + "foo.html");
+        File outputFile = new File(inputDirPath + "foo-min.html");
+        String[] args = {
+            "-s",
+            "-min",
+            inputFile.getPath(),
+        };
+
+        Map<String, String> map = getInputOutputMap(args);
+        Assert.assertEquals(1, map.size());
+        Assert.assertTrue(map.containsKey(inputFile.getAbsolutePath()));
+        Assert.assertEquals(outputFile.getAbsolutePath(), map.get(inputFile.getAbsolutePath()));
     }
 
     /**

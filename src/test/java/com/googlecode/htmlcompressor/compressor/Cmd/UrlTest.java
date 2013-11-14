@@ -29,7 +29,7 @@ public class UrlTest
      * @throws Throwable
      */
     @Test
-    public void testSingleInputStdOutput() throws Throwable {
+    public void testSingleInputToStdOutput() throws Throwable {
         String url = "http://example.com";
         String[] args = {
             url,

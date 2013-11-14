@@ -30,7 +30,7 @@ public class StandardInput
      * @throws Throwable
      */
     @Test
-    public void testSingleInputStdOutput() throws Throwable {
+    public void testSingleInputToStdOutput() throws Throwable {
         String[] args = {
         };
 
